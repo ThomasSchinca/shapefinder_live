@@ -1,7 +1,6 @@
 dash==2.14.1
 dash_bootstrap_components==1.4.0
 dash_cytoscape==0.2.0
-dtaidistance==2.3.2
 Fiona==1.8.22
 geopandas==0.10.2
 numpy==1.22.3
