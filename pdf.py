@@ -75,7 +75,7 @@ c.drawCentredString(297.5, 265, t_2)
 sub_image1 = 'Images/sub1_1.png'
 c.drawImage(sub_image1, x=25, y=90, width=550,height=160,  mask='auto')  # Scaled to fit
 
-pace_logo = 'Images/PaCE_Final.png'
+pace_logo = 'Images/PaCE_final.png'
 c.drawImage(pace_logo, x=50, y=20, width=100,height=40,  mask='auto')  # Scaled to fit
 
 info_text = "Click here for more info"
@@ -189,7 +189,7 @@ for i, (title, image) in enumerate(zip(titles, images)):
     current_x = x_offset + i * x_step
     c.drawImage(image, current_x, image_y, width=150, height=130, preserveAspectRatio=True)
 
-pace_logo = 'Images/PaCE_Final.png'
+pace_logo = 'Images/PaCE_final.png'
 c.drawImage(pace_logo, x=50, y=20, width=100,height=40,  mask='auto')  # Scaled to fit
 
 info_text = "Click here for more info"
