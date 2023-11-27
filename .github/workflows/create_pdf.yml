@@ -2,7 +2,7 @@ name: Create PDF
 
 on:
   schedule:
-    - cron: '0 2 21 * *'
+    - cron: '37 17 27 * *'
 
 jobs:
   run-script:
