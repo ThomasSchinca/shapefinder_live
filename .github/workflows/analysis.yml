@@ -3,6 +3,7 @@ name: analysis
 on:
   schedule:
     - cron: '0 0 21 * *'
+  workflow_dispatch:
 
 jobs:
   run-script:
