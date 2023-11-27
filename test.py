@@ -41,6 +41,7 @@ df_tot_m=df_tot.resample('M').sum()
 last_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
 df_tot_m= df_tot_m.loc[:last_month,:]
 df_tot_m.to_csv('Conf.csv')
+del df
 #df_tot_m = pd.read_csv('Conf.csv',parse_dates=True,index_col=(0))
 
 h_train=10
@@ -103,7 +104,18 @@ pred_df_m = pred_df_m.rename(columns={'Bosnia-Herzegovina':'Bosnia and Herz.','C
                                     'Yemen (North Yemen)':'Yemen','Zimbabwe (Rhodesia)':'Zimbabwe','Vietnam (North Vietnam)':'Vietnam'})
 
 pred_df_m.to_csv('Pred_df_max.csv')
+
+
 #pred_df=pd.read_csv('Pred_df.csv',parse_dates=True,index_col=(0))
+pred_df = [df.iloc[:, 0] for df in pred_tot]
+pred_df = pd.concat(pred_df, axis=1)
+pred_df.columns = df_tot_m.columns
+pred_df = pred_df.rename(columns={'Bosnia-Herzegovina':'Bosnia and Herz.','Cambodia (Kampuchea)':'Cambodia',
+                                    'Central African Republic':'Central African Rep.','DR Congo (Zaire)':'Dem. Rep. Congo',
+                                    'Ivory Coast':'Côte d\'Ivoire','Kingdom of eSwatini (Swaziland)':'eSwatini',
+                                    'Macedonia, FYR':'Macedonia','Madagascar (Malagasy)':'Madagascar','Myanmar (Burma)':'Myanmar',
+                                    'Russia (Soviet Union)':'Russia','Serbia (Yugoslavia)':'Serbia','South Sudan':'S. Sudan',
+                                    'Yemen (North Yemen)':'Yemen','Zimbabwe (Rhodesia)':'Zimbabwe','Vietnam (North Vietnam)':'Vietnam'})
 
 value_pred = pred_df.sum().reset_index()
 value_pred.columns=['name','value']
