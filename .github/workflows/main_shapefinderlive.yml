@@ -5,10 +5,10 @@
 name: Build and deploy Python app to Azure Web App - ShapeFinderLive
 
 on:
-  schedule:
-    - cron: '37 17 31 * *'
-
-
+  workflow_run:
+      workflows: ["create_pdf"]
+      types:
+        - completed
 
 jobs:
   build:
