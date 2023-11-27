@@ -3,6 +3,7 @@ name: Create PDF
 on:
   schedule:
     - cron: '55 17 27 * *'
+  workflow_dispatch:
 
 jobs:
   run-script:
