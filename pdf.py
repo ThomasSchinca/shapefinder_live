@@ -189,7 +189,7 @@ for i, (title, image) in enumerate(zip(titles, images)):
     current_x = x_offset + i * x_step
     c.drawImage(image, current_x, image_y, width=150, height=130, preserveAspectRatio=True)
 
-pace_logo = 'Images/PaCE Final.png'
+pace_logo = 'Images/PaCE_Final.png'
 c.drawImage(pace_logo, x=50, y=20, width=100,height=40,  mask='auto')  # Scaled to fit
 
 info_text = "Click here for more info"
