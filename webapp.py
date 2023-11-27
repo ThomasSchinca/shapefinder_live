@@ -78,16 +78,19 @@ server = webapp.server
 webapp.layout = html.Div([
     html.Div([
        html.H2("Fatalities Risk Map",style={'textAlign': 'left', 'margin': '0', 'padding': '0'}),  # Title
-       html.A([html.H4("The model", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':60})],
+       html.A([html.H4("Try The model", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':50})],
               href="https://shapefinder.azurewebsites.net/",
                style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
-       html.A([html.H4("Monthly report", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':60})],
-              href="https://shapefinder.azurewebsites.net/",
+       html.A([html.H4("Monthly report", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':50})],
+              href="assets/Report.pdf",download="Pace_Monthly_Report.pdf",
                style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
-       html.A([html.H4("Github Project", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':60})],
-              href="https://github.com/ThomasSchinca/shapefinder",
+       html.A([html.H4("Github Project", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':50})],
+              href="https://github.com/ThomasSchinca/shapefinder_live/",
                style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
-       html.A([html.H4("Contact", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':200})],
+       html.A([html.H4("ReadMe", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':50})],
+              href="assets/Web_docu.pdf",download="Documentation.pdf",
+               style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
+       html.A([html.H4("Contact", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':65})],
               href="mailto:schincat@tcd.ie",
                style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
        html.A([html.Img(src='data:image/png;base64,{}'.format(pace_png),style={

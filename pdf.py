@@ -32,7 +32,7 @@ sm_y = six_months.strftime("%Y")
 
 
 # Define the path for the new PDF and the uploaded image
-output_pdf_path = 'Report.pdf'
+output_pdf_path = 'assets/Report.pdf'
 c = canvas.Canvas(output_pdf_path, pagesize=letter)
 
 title_text = f'{month} {year} Newsletter'
@@ -79,7 +79,7 @@ pace_logo = 'Images/PaCE Final.png'
 c.drawImage(pace_logo, x=50, y=20, width=100,height=40,  mask='auto')  # Scaled to fit
 
 info_text = "Click here for more info"
-info_url = "https://shapefinder.azurewebsites.net/"
+info_url = "https://shapefinderlive.azurewebsites.net/"
 c.setFillColor(HexColor("#999999"))  # Blue color for the link text
 c.setFont("Poppins", 10)
 text_width = c.stringWidth(info_text, "Poppins", 10)
