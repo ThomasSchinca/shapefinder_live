@@ -20,7 +20,7 @@ import pickle
 import base64
 
     
-world = gpd.read_file('world_plot.shp')
+world = gpd.read_file('world_plot.geojson')
 pred_df=pd.read_csv('Pred_df.csv',parse_dates=True,index_col=(0))
 pred_df.index = [f"t+{i}" for i in range(1,len(pred_df)+1)]
 pred_df_min =pd.read_csv('Pred_df_min.csv',parse_dates=True,index_col=(0))
