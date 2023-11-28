@@ -20,7 +20,7 @@ df = pd.read_csv("https://ucdp.uu.se/downloads/ged/ged231-csv.zip",
 df= pd.concat([df,pd.read_csv('https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_01_23_09.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
 month = datetime.now().strftime("%m")
 for i in range(10,int(month)):
-    df= pd.concat([df,pd.read_csv('https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_0_10.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
+    df= pd.concat([df,pd.read_csv(f'https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_0_{i}.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
 
 df_tot = pd.DataFrame(columns=df.country.unique(),index=pd.date_range(df.date_start.min(),
                                           df.date_end.max()))
@@ -42,6 +42,7 @@ last_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microseco
 df_tot_m= df_tot_m.loc[:last_month,:]
 df_tot_m.to_csv('Conf.csv')
 del df
+del df_tot
 #df_tot_m = pd.read_csv('Conf.csv',parse_dates=True,index_col=(0))
 
 h_train=10
