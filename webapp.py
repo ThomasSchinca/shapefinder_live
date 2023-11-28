@@ -58,12 +58,12 @@ def generate_subplot(series):
 
 def get_color(log_per_pr):
     cmap = plt.get_cmap('Reds')
-    norm_log_per_pr = (log_per_pr - world['log_per_pr'].min()) / (world['log_per_pr'].max() - world['log_per_pr'].min())
+    norm_log_per_pr = (log_per_pr - world['log_per_pred'].min()) / (world['log_per_pred'].max() - world['log_per_pred'].min())
     rgba_color = cmap(norm_log_per_pr)
     hex_color = to_hex(rgba_color)
     return hex_color
 
-world['color'] = world['log_per_pr'].apply(get_color)
+world['color'] = world['log_per_pred'].apply(get_color)
 l_country = [dl.GeoJSON(data=json.loads(world.iloc[index:index+1].to_json()), style={'color': row['color'], 'opacity': 0, 'fillOpacity': '1'}) for index, row in world.iterrows()]
 pace_png = base64.b64encode(open('PaCE_final_icon.png', 'rb').read()).decode('ascii')
 
