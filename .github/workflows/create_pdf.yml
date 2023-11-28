@@ -28,3 +28,11 @@ jobs:
     - name: Run script
       run: |
         python pdf.py
+    - name: Add and commit
+      uses: EndBug/add-and-commit@v9
+      with:
+        author_name: GitHub Actions
+        author_email: 41898282+github-actions[bot]@users.noreply.github.com
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        message: "chore: Update Report"
+        add: "*.pdf"
