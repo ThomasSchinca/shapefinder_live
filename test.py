@@ -140,7 +140,7 @@ world = world.fillna(0)
 world['per_pred']=world['value']/world['pop_est']
 world['log_per_pred']=np.log10(world['value']+1)
 world.to_file('world_plot.shp') 
-world.to_file('world_plot.geojson', driver='GeoJSON') 
+#world.to_file('world_plot.geojson', driver='GeoJSON') 
 df_tot_m_plot=df_tot_m.iloc[-h_train:,:]
 df_tot_m_plot = df_tot_m_plot.rename(columns={'Bosnia-Herzegovina':'Bosnia and Herz.','Cambodia (Kampuchea)':'Cambodia',
                                    'Central African Republic':'Central African Rep.','DR Congo (Zaire)':'Dem. Rep. Congo',
