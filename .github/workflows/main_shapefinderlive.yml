@@ -6,7 +6,7 @@ name: Build and deploy Python app to Azure Web App - ShapeFinderLive
 
 on:
   workflow_run:
-      workflows: ["create_pdf"]
+      workflows: ["Create pdf"]
       types:
         - completed
 
