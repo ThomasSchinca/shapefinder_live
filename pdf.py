@@ -13,6 +13,8 @@ from datetime import datetime,date
 from dateutil.relativedelta import relativedelta
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus import  Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 import pandas as pd
 
 # Path to your Poppins font .ttf files
@@ -35,45 +37,84 @@ sm_y = six_months.strftime("%Y")
 output_pdf_path = 'assets/Report.pdf'
 c = canvas.Canvas(output_pdf_path, pagesize=letter)
 
-title_text = f'{month} {year} Newsletter'
+title_text = f'Patterns of Conflict ({month} {year} Newsletter)'
 title_font = "Poppins-Bold"  
-title_font_size = 30
+title_font_size = 22
 title_color = HexColor("#df2226")
 # Add title to the PDF
 c.setFont(title_font, title_font_size)
 c.setFillColor(title_color)
 c.drawCentredString(297.5, 750, title_text)  # Positioning title at the top, center of the page
 
+def draw_paragraph(c, text, font, font_size, color, x, y, width):
+    styles = getSampleStyleSheet()
+    style = styles["BodyText"]
+    style.fontName = font
+    style.fontSize = font_size
+    style.textColor = color
+
+    # Create a Paragraph object
+    paragraph = Paragraph(text, style)
+
+    # Draw the Paragraph on the canvas
+    paragraph.wrapOn(c, width, 1000)  # Adjust the height as needed
+    paragraph.drawOn(c, x, y)
+    
+subtitle_text = 'Our Global Risk Prediction Map identifies countries with similar past experiences in conflict-related fatalities. By analyzing historical data patterns, this approach forecasts future trends and highlights nations with comparable conflict trajectories.'
+subtitle_font = "Poppins"  # Using a standard sans-serif font
+subtitle_font_size = 11
+subtitle_color = HexColor("#505050")
+paragraph_x = 25
+paragraph_y = 700
+paragraph_width = 550  # Adjust as needed
+# Draw the paragraph
+draw_paragraph(c, subtitle_text, subtitle_font, subtitle_font_size, subtitle_color, paragraph_x, paragraph_y, paragraph_width)
+
+
 # Set the subtitle properties
 subtitle_text = "Global Risk Prediction Map ("+str(month_s)+' '+str(year)+' - '+str(sm_m)+' '+str(sm_y)+")"
 subtitle_font = "Poppins"  # Using a standard sans-serif font
 subtitle_font_size = 11
-subtitle_color = HexColor("#505050")  # Assuming "gris foncé 3" is a dark grey color
+  # Assuming "gris foncé 3" is a dark grey color
 c.setFont(subtitle_font, subtitle_font_size)
 c.setFillColor(subtitle_color)
-c.drawCentredString(297.5, 730, subtitle_text)  # Positioning subtitle below the title
+c.drawCentredString(297.5, 670, subtitle_text)  # Positioning subtitle below the title
 
 # Place the image on the PDF
 map_image_path = 'Images/map.png'
-c.drawImage(map_image_path, x=50, y=470, width=500, height=250, mask='auto')  # Scaled to fit
+c.drawImage(map_image_path, x=70, y=440, width=450, height=225, mask='auto')  # Scaled to fit
 
 
-t_1 = "Most Risky Countries"
+t_2 = "Global expected Fatalities"
 c.setFillColor(subtitle_color)
-c.drawCentredString(297.5/2, 455, t_1)
-t_3 = "Continent Risk"
-c.setFillColor(subtitle_color)
-c.drawCentredString(297.5*1.5, 455, t_3)
-sub_image2 = 'Images/sub2.png'
-sub_image3 = 'Images/sub3.png'
-c.drawImage(sub_image2, x=50, y=285, width=220,height=160, mask='auto')  # Scaled to fit
-c.drawImage(sub_image3, x=325, y=285, width=220,height=160, mask='auto')  # Scaled to fit
-
-t_2 = "Monthly Fatalities based on Historical Patterns"
-c.setFillColor(subtitle_color)
-c.drawCentredString(297.5, 265, t_2)
+c.drawCentredString(297.5, 415, t_2)
 sub_image1 = 'Images/sub1_1.png'
-c.drawImage(sub_image1, x=25, y=90, width=550,height=160,  mask='auto')  # Scaled to fit
+c.drawImage(sub_image1, x=25, y=250, width=550,height=160,  mask='auto')  # Scaled to fit
+
+
+
+
+
+
+sub_image2 = 'Images/sub2.png'
+sub_image3 = 'Images/sub2_i.png'
+sub_image4 = 'Images/sub2_d.png'
+c.drawImage(sub_image2, x=30, y=70, width=180,height=150, mask='auto')
+c.drawImage(sub_image3, x=215, y=70, width=180,height=150, mask='auto')  
+c.drawImage(sub_image4, x=410, y=70, width=180,height=150, mask='auto')  
+subtitle_font_size = 10
+  # Assuming "gris foncé 3" is a dark grey color
+c.setFont(subtitle_font, subtitle_font_size)
+t_1 = "Largest nb. of fatalities expected"
+c.setFillColor(subtitle_color)
+c.drawCentredString(120, 225, t_1)
+t_3 = "Largest expected increase"
+c.setFillColor(subtitle_color)
+c.drawCentredString(310, 225, t_3)
+t_4 = "Largest expected decrease"
+c.setFillColor(subtitle_color)
+c.drawCentredString(510, 225, t_4)
+
 
 pace_logo = 'Images/PaCE_final.png'
 c.drawImage(pace_logo, x=50, y=20, width=100,height=40,  mask='auto')  # Scaled to fit
@@ -124,34 +165,50 @@ title_font_size = 13
 title_color = HexColor("#df2226")
 c.setFont(title_font, title_font_size)
 c.setFillColor(title_color)
-c.drawCentredString(75, 740, title_text)
+c.drawCentredString(75, 760, title_text)
 
-images = ['Images/ex1.png', 'Images/ex1_m4.png', 'Images/ex1_barh.png']
-titles = ["Last Observed Values", "Mean of Past Futures", "All sequences"]
-subtitle_font = "Poppins"  # Using a standard sans-serif font
-subtitle_font_size = 11
-subtitle_color = HexColor("#505050")  # Assuming "gris foncé 3" is a dark grey color
+
+sub_image2 = 'Images/ex1.png'
+sub_image3 = 'Images/ex1_all.png'
+c.drawImage(sub_image2, x=60, y=600, width=160,height=120, mask='auto')
+c.drawImage(sub_image3, x=270, y=600, width=300,height=120, mask='auto')  
+subtitle_font_size = 10
+  # Assuming "gris foncé 3" is a dark grey color
 c.setFont(subtitle_font, subtitle_font_size)
+t_1 = "Fatalities over last 10 months"
 c.setFillColor(subtitle_color)
-image_y = 580
-text_y = image_y + 130 
-x_offset = 50
-x_step = 175
-for i, (title, image) in enumerate(zip(titles, images)):
-    current_x = x_offset + i * x_step
-    if i==2:
-        c.drawImage(image, current_x-15, image_y, width=200, height=150, preserveAspectRatio=True)
-        c.drawString(current_x+50, text_y, title)
-    else:
-        c.drawImage(image, current_x, image_y, width=150, height=130, preserveAspectRatio=True)
-        c.drawString(current_x+25, text_y, title)
+c.drawCentredString(150, 740, t_1)
+t_3 = "Closest historical matches"
+c.setFillColor(subtitle_color)
+c.drawCentredString(430, 740, t_3)
 
-c.drawCentredString(297.5, image_y-10, 'Matching sequences')
-image_y = 440
-images = ['Images/ex1_m0.png', 'Images/ex1_m1.png', 'Images/ex1_m2.png']
-for i, (title, image) in enumerate(zip(titles, images)):
-    current_x = x_offset + i * x_step
-    c.drawImage(image, current_x, image_y, width=150, height=130, preserveAspectRatio=True)
+# images = ['Images/ex1.png', 'Images/ex1_m4.png', 'Images/ex1_barh.png']
+# titles = ["Last Observed Values", "Mean of Past Futures", "All sequences"]
+# subtitle_font = "Poppins"  # Using a standard sans-serif font
+# subtitle_font_size = 11
+# subtitle_color = HexColor("#505050")  # Assuming "gris foncé 3" is a dark grey color
+# c.setFont(subtitle_font, subtitle_font_size)
+# c.setFillColor(subtitle_color)
+# image_y = 580
+# text_y = image_y + 130 
+# x_offset = 50
+# x_step = 175
+# for i, (title, image) in enumerate(zip(titles, images)):
+#     current_x = x_offset + i * x_step
+#     if i==2:
+#         c.drawImage(image, current_x-15, image_y, width=200, height=150, preserveAspectRatio=True)
+#         c.drawString(current_x+50, text_y, title)
+#     else:
+#         c.drawImage(image, current_x, image_y, width=150, height=130, preserveAspectRatio=True)
+#         c.drawString(current_x+25, text_y, title)
+
+# c.drawCentredString(297.5, image_y-10, 'Matching sequences')
+# image_y = 440
+# images = ['Images/ex1_m0.png', 'Images/ex1_m1.png', 'Images/ex1_m2.png']
+# for i, (title, image) in enumerate(zip(titles, images)):
+#     current_x = x_offset + i * x_step
+#     c.drawImage(image, current_x, image_y, width=150, height=130, preserveAspectRatio=True)
+
 
 first = df_best.iloc[-2][0]
 title_text = f'{first}'
@@ -160,34 +217,77 @@ title_font_size = 13
 title_color = HexColor("#df2226")
 c.setFont(title_font, title_font_size)
 c.setFillColor(title_color)
+c.drawCentredString(75, 580, title_text)
+
+
+sub_image2 = 'Images/ex2.png'
+sub_image3 = 'Images/ex2_all.png'
+c.drawImage(sub_image2, x=60, y=420, width=160,height=120, mask='auto')
+c.drawImage(sub_image3, x=270, y=420, width=300,height=120, mask='auto')  
+subtitle_font_size = 10
+  # Assuming "gris foncé 3" is a dark grey color
+c.setFont(subtitle_font, subtitle_font_size)
+t_1 = "Fatalities over last 10 months"
+c.setFillColor(subtitle_color)
+c.drawCentredString(150, 560, t_1)
+t_3 = "Closest historical matches"
+c.setFillColor(subtitle_color)
+c.drawCentredString(430, 560, t_3)
+
+
+first = df_best.iloc[-3][0]
+title_text = f'{first}'
+title_font = "Poppins-Bold"  
+title_font_size = 13
+title_color = HexColor("#df2226")
+c.setFont(title_font, title_font_size)
+c.setFillColor(title_color)
 c.drawCentredString(75, 400, title_text)
 
-images = ['Images/ex2.png', 'Images/ex2_m4.png', 'Images/ex2_barh.png']
-titles = ["Last Observed Values", "Mean of Past Futures", "All sequences"]
-subtitle_font = "Poppins"  # Using a standard sans-serif font
-subtitle_font_size = 11
-subtitle_color = HexColor("#505050")  # Assuming "gris foncé 3" is a dark grey color
-c.setFont(subtitle_font, subtitle_font_size)
-c.setFillColor(subtitle_color)
-image_y = 240
-text_y = image_y + 130 
-x_offset = 50
-x_step = 175
-for i, (title, image) in enumerate(zip(titles, images)):
-    current_x = x_offset + i * x_step
-    if i==2:
-        c.drawImage(image, current_x-15, image_y, width=200, height=150, preserveAspectRatio=True)
-        c.drawString(current_x+50, text_y, title)
-    else:
-        c.drawImage(image, current_x, image_y, width=150, height=130, preserveAspectRatio=True)
-        c.drawString(current_x+25, text_y, title)
 
-c.drawCentredString(297.5, image_y-10, 'Matching sequences')
-image_y = 100
-images = ['Images/ex2_m0.png', 'Images/ex2_m1.png', 'Images/ex2_m2.png']
-for i, (title, image) in enumerate(zip(titles, images)):
-    current_x = x_offset + i * x_step
-    c.drawImage(image, current_x, image_y, width=150, height=130, preserveAspectRatio=True)
+sub_image2 = 'Images/ex3.png'
+sub_image3 = 'Images/ex3_all.png'
+c.drawImage(sub_image2, x=60, y=250, width=160,height=120, mask='auto')
+c.drawImage(sub_image3, x=270, y=250, width=300,height=120, mask='auto')  
+subtitle_font_size = 10
+  # Assuming "gris foncé 3" is a dark grey color
+c.setFont(subtitle_font, subtitle_font_size)
+t_1 = "Fatalities over last 10 months"
+c.setFillColor(subtitle_color)
+c.drawCentredString(150, 380, t_1)
+t_3 = "Closest historical matches"
+c.setFillColor(subtitle_color)
+c.drawCentredString(430, 380, t_3)
+
+
+first = df_best.iloc[-4][0]
+title_text = f'{first}'
+title_font = "Poppins-Bold"  
+title_font_size = 13
+title_color = HexColor("#df2226")
+c.setFont(title_font, title_font_size)
+c.setFillColor(title_color)
+c.drawCentredString(75, 220, title_text)
+
+
+sub_image2 = 'Images/ex4.png'
+sub_image3 = 'Images/ex4_all.png'
+c.drawImage(sub_image2, x=60, y=70, width=160,height=120, mask='auto')
+c.drawImage(sub_image3, x=270, y=70, width=300,height=120, mask='auto')  
+subtitle_font_size = 10
+  # Assuming "gris foncé 3" is a dark grey color
+c.setFont(subtitle_font, subtitle_font_size)
+t_1 = "Fatalities over last 10 months"
+c.setFillColor(subtitle_color)
+c.drawCentredString(150, 200, t_1)
+t_3 = "Closest historical matches"
+c.setFillColor(subtitle_color)
+c.drawCentredString(430, 200, t_3)
+
+
+
+
+
 
 pace_logo = 'Images/PaCE_final.png'
 c.drawImage(pace_logo, x=50, y=20, width=100,height=40,  mask='auto')  # Scaled to fit
@@ -210,7 +310,7 @@ contact = "Contact"
 
 # Calculate the positioning for the text
 right_margin = 50
-bottom_margin = 20
+bottom_margin = 10
 line_height = 12
 
 
