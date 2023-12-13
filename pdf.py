@@ -326,6 +326,54 @@ subtitle_color = HexColor("#505050")  # Assuming "gris foncé 3" is a dark grey 
 c.setFont(subtitle_font, subtitle_font_size)
 c.setFillColor(subtitle_color)
 c.drawString(letter[0] - right_margin - c.stringWidth('Contact', "Poppins", 11), bottom_margin + 3.25*line_height, 'Contact')
+c.showPage()
+
+
+content = """
+The "Patterns of Conflict" report identifies and compares conflict patterns across various
+countries. This process involves aggregating historical conflict data and matching similar
+patterns of conflict-related events. The methodology focuses on identifying trends and 
+potential future scenarios based on historical data. The objective is to provide a predictive 
+insight into how conflict patterns may evolve, aiding in better-informed strategic planning 
+and decision-making.
+
+The methodology in the "Patterns of Conflict" report is centered on a comparative analysis of 
+conflict-related data across countries. It involves the following steps:
+
+1.  Data collection. The data used in the "Patterns of Conflict" report is sourced from the 
+    Uppsala Conflict Data Program (UCDP), a comprehensive database that records and codes 
+    data on conflict and associated events worldwide. Specifically, the report makes use of 
+    the "best" estimate variable for battle-related deaths provided by UCDP 
+    (see https://ucdp.uu.se/downloads/brd/ucdp-brd-codebook.pdf)
+
+2.  Short sequences of casualty data are compared to each other using various algorithms 
+    (DTW, Euclidean distance), which allow us to identify similar shapes in the data, even 
+    ones that may be out of sync temporally. A distance threshold is applied to select only 
+    sequences that are close matches.
+
+3.  The model then predicts potential increases or decreases in conflict-related fatalities 
+    based on an average of past patterns.
+"""
+
+
+title_text = 'About'
+title_font = "Poppins-Bold"  
+title_font_size = 13
+title_color = HexColor("#df2226")
+c.setFont(title_font, title_font_size)
+c.setFillColor(title_color)
+c.drawCentredString(70, 730, title_text)
+
+y_position = letter[1]-70
+# Add the content to the PDF using canvas
+for line in content.split('\n'):
+    y_position -= 12  # Adjust the spacing as needed
+    subtitle_font = "Poppins"  # Using a standard sans-serif font
+    subtitle_font_size = 11
+    subtitle_color = HexColor("#505050")  # Assuming "gris foncé 3" is a dark grey color
+    c.setFont(subtitle_font, subtitle_font_size)
+    c.setFillColor(subtitle_color)
+    c.drawString(50, y_position, line)
 
 c.save()
 

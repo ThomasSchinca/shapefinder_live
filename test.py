@@ -388,16 +388,16 @@ seq_pred =find.predict(horizon=h,plot=False,mode='mean',seq_out=True)
 plt.figure(figsize=(10, 6))
 plt.plot(df_tot_m.iloc[-h_train:,i], marker='o', color='black', linestyle='-', linewidth=2, markersize=8)
 plt.grid(axis='y', linestyle='--', alpha=0.7)
-plt.xlabel('Date', fontsize=20)
-plt.xticks(fontsize=16)  # Set x-axis tick font size
-plt.yticks(fontsize=16)
+plt.xlabel('Date', fontsize=25)
+plt.xticks(fontsize=20)  # Set x-axis tick font size
+plt.yticks(fontsize=20)
 plt.box(False)
 plt.xticks(rotation=45, ha='right')
 plt.savefig('Images/ex1.png', bbox_inches='tight')
 plt.show()
 
 plt.figure(figsize=(15, 6))
-for i in range(len(seq_pred[:20])):
+for i in range(len(seq_pred[:30])):
     norm = (find.sequences[i][0] - find.sequences[i][0].min()) / (find.sequences[i][0].max()-find.sequences[i][0].min())
     norm.index = range(12-len(norm),12)
     pre = pd.Series([norm.iloc[-1]]+seq_pred.iloc[i,:].tolist())
@@ -406,7 +406,7 @@ for i in range(len(seq_pred[:20])):
     plt.plot(pre,alpha=0.3,color='#E41B17')
 pre = pd.Series([shape.values[-1]]+pred_ori.iloc[:,0].tolist())
 pre.index = range(11,18)    
-plt.plot(pre,marker='o',alpha=1,linewidth=5,color='r')
+plt.plot(pre,marker='o',alpha=1,linewidth=5,color='r',label='Mean value of Matches')
 if max(pre)>1:
     plt.ylim(0,max(pre)+0.1*max(pre))
 else:
@@ -415,8 +415,9 @@ plt.xticks([*range(18)],[f't-{i}' for i in range(1,12)][::-1]+['t']+[f't+{i}' fo
 plt.xticks([*range(18)],['']*12+[f't+{i}' for i in range(1,7)])
 plt.box(False)
 plt.grid(axis='y', linestyle='--', alpha=0.7)
-plt.xticks(fontsize=16)  # Set x-axis tick font size
-plt.yticks(fontsize=16)
+plt.xticks(fontsize=20)  # Set x-axis tick font size
+plt.yticks(fontsize=20)
+#plt.legend(loc='upper left')
 plt.savefig('Images/ex1_all.png', bbox_inches='tight')
 plt.show()
     
@@ -469,7 +470,7 @@ plt.show()
 
 
 
-for coun in range(3,5):
+for coun in range(2,5):
 
     h_train=10
     h=6
@@ -488,7 +489,7 @@ for coun in range(3,5):
     seq_pred =find.predict(horizon=h,plot=False,mode='mean',seq_out=True)
     
     plt.figure(figsize=(15, 6))
-    for j in range(len(seq_pred[:20])):
+    for j in range(len(seq_pred[:30])):
         norm = (find.sequences[j][0] - find.sequences[j][0].min()) / (find.sequences[j][0].max()-find.sequences[j][0].min())
         norm.index = range(12-len(norm),12)
         pre = pd.Series([norm.iloc[-1]]+seq_pred.iloc[j,:].tolist())
@@ -514,15 +515,16 @@ for coun in range(3,5):
     plt.figure(figsize=(10, 6))
     plt.plot(df_tot_m.iloc[-h_train:,i], marker='o', color='black', linestyle='-', linewidth=2, markersize=8)
     plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.xlabel('Date', fontsize=20)
-    plt.xticks(fontsize=16)  # Set x-axis tick font size
-    plt.yticks(fontsize=16)
+    plt.xlabel('Date', fontsize=25)
+    plt.xticks(fontsize=20)  # Set x-axis tick font size
+    plt.yticks(fontsize=20)
     plt.box(False)
     plt.xticks(rotation=45, ha='right')
     plt.savefig(f'Images/ex{coun}.png', bbox_inches='tight')
     plt.show()
     
-
-
 df_best = pd.DataFrame(df_plot.index[-4:])
 df_best.to_csv('best.csv')
+
+
+
