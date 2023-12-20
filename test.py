@@ -19,7 +19,7 @@ df = pd.read_csv("https://ucdp.uu.se/downloads/ged/ged231-csv.zip",
                   parse_dates=['date_start','date_end'],low_memory=False)
 df= pd.concat([df,pd.read_csv('https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_01_23_09.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
 month = datetime.now().strftime("%m")
-for i in range(10,int(month)):
+for i in range(10,int(month)-1):
     df= pd.concat([df,pd.read_csv(f'https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_0_{i}.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
 
 df_tot = pd.DataFrame(columns=df.country.unique(),index=pd.date_range(df.date_start.min(),

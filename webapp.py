@@ -19,6 +19,24 @@ import pandas as pd
 import pickle 
 import base64
 
+def generate_subplot(series):
+    fig = px.line(series, title=series.name)
+    fig.update_layout(
+                showlegend=False,plot_bgcolor="white",
+                margin=dict(t=30,l=30,b=5,r=5),
+                xaxis_title='',
+                yaxis_title='')
+    fig.update_traces(line=dict(color='grey'))
+    return fig
+
+def get_color(log_per_pr):
+    cmap = plt.get_cmap('Reds')
+    norm_log_per_pr = (log_per_pr - world['log_per_pred'].min()) / (world['log_per_pred'].max() - world['log_per_pred'].min())
+    rgba_color = cmap(norm_log_per_pr)
+    hex_color = to_hex(rgba_color)
+    return hex_color
+
+
 world = gpd.read_file('world_plot.geojson')
 pred_df=pd.read_csv('Pred_df.csv',parse_dates=True,index_col=(0))
 missing_columns = set(world['name']) - set(pred_df.columns)
@@ -38,6 +56,8 @@ rena={'Bosnia-Herzegovina':'Bosnia and Herz.','Cambodia (Kampuchea)':'Cambodia',
                                    'Macedonia, FYR':'Macedonia','Madagascar (Malagasy)':'Madagascar','Myanmar (Burma)':'Myanmar',
                                    'Russia (Soviet Union)':'Russia','Serbia (Yugoslavia)':'Serbia','South Sudan':'S. Sudan',
                                    'Yemen (North Yemen)':'Yemen','Zimbabwe (Rhodesia)':'Zimbabwe','Vietnam (North Vietnam)':'Vietnam'}
+reversed_rena = {value: key for key, value in rena.items()}
+
 dict_m = {rena[key] if key in rena else key: item for key, item in dict_m_o.items()}
 dict_m.update({col: [] for col in missing_columns})
 
@@ -51,28 +71,16 @@ for key, series_int_list in dict_m.items():
     series_list = [item[1] for item in series_int_list[:5]]
     dist_dict[key] = series_list
 
-def generate_subplot(series):
-    fig = px.line(series, title=series.name)
-    fig.update_layout(
-                showlegend=False,plot_bgcolor="white",
-                margin=dict(t=30,l=30,b=5,r=5),
-                xaxis_title='',
-                yaxis_title='')
-    fig.update_traces(line=dict(color='grey'))
-    return fig
-
-def get_color(log_per_pr):
-    cmap = plt.get_cmap('Reds')
-    norm_log_per_pr = (log_per_pr - world['log_per_pred'].min()) / (world['log_per_pred'].max() - world['log_per_pred'].min())
-    rgba_color = cmap(norm_log_per_pr)
-    hex_color = to_hex(rgba_color)
-    return hex_color
-
+world['name_alt']= world['name'].replace(reversed_rena)
 world['color'] = world['log_per_pred'].apply(get_color)
 l_country = [dl.GeoJSON(data=json.loads(world.iloc[index:index+1].to_json()), style={'color': row['color'], 'opacity': 0, 'fillOpacity': '1'}) for index, row in world.iterrows()]
 pace_png = base64.b64encode(open('PaCE_final_icon.png', 'rb').read()).decode('ascii')
 git_png = base64.b64encode(open('github-mark.png', 'rb').read()).decode('ascii')
 x_logo = base64.b64encode(open('x_logo.png', 'rb').read()).decode('ascii')
+gif_fo = base64.b64encode(open('Images/explic.gif', 'rb').read()).decode('ascii')
+ab1 = base64.b64encode(open('Images/about_1.png', 'rb').read()).decode('ascii')
+ab2 = base64.b64encode(open('Images/about_2.png', 'rb').read()).decode('ascii')
+ab3 = base64.b64encode(open('Images/about_3.png', 'rb').read()).decode('ascii')
 
 external_stylesheets=[dbc.themes.LUX]
 webapp = dash.Dash(__name__,external_stylesheets=external_stylesheets)
@@ -222,50 +230,28 @@ about_layout=html.Div([
         ], style={'backgroundColor': '#D3D3D3', 'padding': '8px','marginBottom':20, 'display': 'flex'})]),
     
     html.Div([
-        html.H1("Pace Risk Map Web Application"),
-        
+        html.H1("Pace Risk Map Web Application", style={'marginBottom':20,'textAlign': 'center'}),
+        html.H3("Overview"),
         dcc.Markdown("""
-        **Overview**
-        
         The Pace Risk Map web application is designed to visualize and analyze risk factors related to conflict and fatalities across different countries. It incorporates geographical data, matching models, and historical information to provide insights into potential conflict scenarios.
-        
-        **Purpose**
-        
+        """),
+        html.H3("Purpose"),
+        dcc.Markdown("""
         - Provide a user-friendly interface for exploring conflict risk data.
         - Display historical information for individual countries.
         - Offer additional resources for further exploration.
         
-        **Data Sources**
-        
-        - Conflict-Fatalities: UCDP Dataset ([UCDP Dataset](https://ucdp.uu.se/downloads/)), aggregated at the country-monthly level.
-        - UCDP Georeferenced Event Dataset.
-        - UCDP Candidate Events Dataset (to get the latest data).
-        
-        **The Model**
-        
-        The applied model operates by examining recent events within a country and aligning them with historical occurrences. It discerns patterns in the temporal evolution of incidents, enabling the identification of analogous scenarios from the past. This matching process contributes to a comprehensive understanding of when and where comparable situations have historically manifested. Consequently, the model plays a pivotal role in predicting the future trajectory of potential conflict-related scenarios based on these historical parallels, called ‘Past Future’.
-        
-        **Functionality**
-        
-        - **Map Visualization:**
-          Color-coded map indicating risk levels. The risk level corresponds to the log value of the sum of the 6-month future values of matched historical cases. The more red the country, the higher risk value.
-          
-        - **Clicking on a country reveals Country-specific Data:**
-          - **Country-specific Data:**
-            - Historical data displayed in line charts, corresponding to the last 10-months aggregated fatalities.
-            - Mean and Confidence interval of the following timestamp of the historical cases matched.
-            - Bar chart showing the best-matched sequences. The bar values represent the distance from the selected country sequence.
-            
-          - **Matched Historical Cases:**
-            All the plot of the matched historical cases with the name of the country as title and Date as index. The sequences are ordered by similarity (or lowest distance).
         """),
-        
+        html.H3("Functionality"),
+        html.Div(html.Img(src='data:image/png;base64,{}'.format(ab1), style={'width': '80%'}), style={'text-align': 'center'}),
+        html.Div(html.Img(src='data:image/png;base64,{}'.format(ab2), style={'width': '80%'}), style={'text-align': 'center'}),
+        html.Div(html.Img(src='data:image/png;base64,{}'.format(ab3), style={'width': '80%'}), style={'text-align': 'center'}),
         html.H3("Data Sources"),
         
         dcc.Markdown("""
-        - **Conflict-Fatalities:** UCDP Dataset ([UCDP Dataset](https://ucdp.uu.se/downloads/)), aggregated at the country-monthly level.
+        - **Conflict-Fatalities:**[UCDP Dataset](https://ucdp.uu.se/downloads/), aggregated at the country-monthly level.
         - **UCDP Georeferenced Event Dataset.**
-        - **UCDP Candidate Events Dataset (to get the latest data)."""
+        - **UCDP Candidate Events Dataset (to get the latest data).** """
         ),
         
         html.H3("The Model"),
@@ -273,42 +259,10 @@ about_layout=html.Div([
         dcc.Markdown("""
         The applied model operates by examining recent events within a country and aligning them with historical occurrences. It discerns patterns in the temporal evolution of incidents, enabling the identification of analogous scenarios from the past. This matching process contributes to a comprehensive understanding of when and where comparable situations have historically manifested. Consequently, the model plays a pivotal role in predicting the future trajectory of potential conflict-related scenarios based on these historical parallels, called ‘Past Future’."""
         ),
-        
-        html.H3("Functionality"),
-        
-        dcc.Markdown("""
-        - **Map Visualization:**
-          Color-coded map indicating risk levels. The risk level corresponds to the log value of the sum of the 6-month future values of matched historical cases. The more red the country, the higher risk value.
-          
-        - **Clicking on a country reveals Country-specific Data:**
-          - **Country-specific Data:**
-            - Historical data displayed in line charts, corresponding to the last 10-months aggregated fatalities.
-            - Mean and Confidence interval of the following timestamp of the historical cases matched.
-            - Bar chart showing the best-matched sequences. The bar values represent the distance from the selected country sequence.
-            
-          - **Matched Historical Cases:**
-            All the plot of the matched historical cases with the name of the country as title and Date as index. The sequences are ordered by similarity (or lowest distance)."""
-        )
+        html.Div(html.Img(src='data:image/gif;base64,{}'.format(gif_fo), style={'width': '80%'}), style={'text-align': 'center'})
     ],style={'marginLeft':50})
         
     ])
-# app.layout = html.Div([
-#     #html.H1(children='ShapeFinder Risk Prediction Tool',style = {'textAlign': 'center','marginBottom':40,'marginTop':20,'fontFamily': 'Oswald, sans-serif','color': 'red'}),
-#     html.Div([
-#         dl.Map(center=[38, 0], zoom=2,minZoom=2, children=l_country+[
-#             dl.GeoJSON(url='/assets/world_plot.geojson',id='total_c',style={'color': 'black', 'weight': 1, 'opacity': 1, 'fillOpacity': 0})
-#         ], style={'width': '100%','height':'100%','backgroundColor': 'white'}, id='map')],style={"display": "flex",'width':'100%','height': '90vh'}),
-#     html.Div(id='sel'),
-#     html.Div([html.Div(id='plot_test', style={'width': '100%', 'height': '100%', 'margin': '0'}),
-#                   html.Div(id='plot_test2', style={'width': '100%', 'height': '100%', 'margin': '0'}),
-#                   html.Div(id='plot_test3', style={'width': '100%', 'height': '100%', 'margin': '0'})
-#                   ], style={"display": "flex",'width': '100%', 'margin': '0'}),
-#     html.Hr(style={'width': '70%','margin':'auto'}),
-#     html.Div(id='tite'),
-#     html.Div([
-#     html.Div(id='plot_test4')
-#     ],style={'marginLeft':100})
-# ])
 
 
 
@@ -349,7 +303,7 @@ def display_country_plot(feature):
                 yaxis_title='',
                 yaxis=dict(showgrid=True),
                 title=dict(text="Mean of Past Future", font=dict(size=16, color='darkgrey'), x=0.5))
-            m_names = [str(i.name)+': '+str(i.index[0].month)+'-'+str(i.index[0].year) for i in new_dict[country_name][:5]]
+            m_names = [str(world[world['name_alt']==i.name]['iso_a3'].iloc[0])+': '+str(i.index[0].month)+'-'+str(i.index[0].year) for i in new_dict[country_name][:5]]
             m_dist = dist_dict[country_name]
             if len(m_dist) !=0:
                 fig3 = px.bar(x=m_names, y=m_dist, title='Best Matches',
