@@ -78,6 +78,7 @@ pace_png = base64.b64encode(open('PaCE_final_icon.png', 'rb').read()).decode('as
 git_png = base64.b64encode(open('github-mark.png', 'rb').read()).decode('ascii')
 x_logo = base64.b64encode(open('x_logo.png', 'rb').read()).decode('ascii')
 gif_fo = base64.b64encode(open('Images/explic.gif', 'rb').read()).decode('ascii')
+gif_dtw = base64.b64encode(open('Images/dtw.gif', 'rb').read()).decode('ascii')
 ab1 = base64.b64encode(open('Images/about_1.png', 'rb').read()).decode('ascii')
 ab2 = base64.b64encode(open('Images/about_2.png', 'rb').read()).decode('ascii')
 ab3 = base64.b64encode(open('Images/about_3.png', 'rb').read()).decode('ascii')
@@ -235,31 +236,34 @@ about_layout=html.Div([
         dcc.Markdown("""
         The Pace Risk Map web application is designed to visualize and analyze risk factors related to conflict and fatalities across different countries. It incorporates geographical data, matching models, and historical information to provide insights into potential conflict scenarios.
         """),
-        html.H3("Purpose"),
+        html.H3("Purpose",style={'marginTop':30}),
         dcc.Markdown("""
         - Provide a user-friendly interface for exploring conflict risk data.
         - Display historical information for individual countries.
         - Offer additional resources for further exploration.
         
         """),
-        html.H3("Functionality"),
+        html.H3("Functionality",style={'marginTop':30}),
         html.Div(html.Img(src='data:image/png;base64,{}'.format(ab1), style={'width': '80%'}), style={'text-align': 'center'}),
         html.Div(html.Img(src='data:image/png;base64,{}'.format(ab2), style={'width': '80%'}), style={'text-align': 'center'}),
         html.Div(html.Img(src='data:image/png;base64,{}'.format(ab3), style={'width': '80%'}), style={'text-align': 'center'}),
-        html.H3("Data Sources"),
+        html.H3("Data Sources",style={'marginTop':30}),
         
         dcc.Markdown("""
         - **Conflict-Fatalities:**[UCDP Dataset](https://ucdp.uu.se/downloads/), aggregated at the country-monthly level.
         - **UCDP Georeferenced Event Dataset.**
-        - **UCDP Candidate Events Dataset (to get the latest data).** """
-        ),
-        
-        html.H3("The Model"),
-        
+        - **UCDP Candidate Events Dataset (to get the latest data).** """),
+        html.H3("The Model",style={'marginTop':30}),
         dcc.Markdown("""
-        The applied model operates by examining recent events within a country and aligning them with historical occurrences. It discerns patterns in the temporal evolution of incidents, enabling the identification of analogous scenarios from the past. This matching process contributes to a comprehensive understanding of when and where comparable situations have historically manifested. Consequently, the model plays a pivotal role in predicting the future trajectory of potential conflict-related scenarios based on these historical parallels, called ‘Past Future’."""
-        ),
-        html.Div(html.Img(src='data:image/gif;base64,{}'.format(gif_fo), style={'width': '80%'}), style={'text-align': 'center'})
+        The applied model operates by examining recent events within a country and aligning them with historical occurrences. It discerns patterns in the temporal evolution of incidents, enabling the identification of analogous scenarios from the past. This matching process contributes to a comprehensive understanding of when and where comparable situations have historically manifested. Consequently, the model plays a pivotal role in predicting the future trajectory of potential conflict-related scenarios based on these historical parallels, called ‘Past Future’."""),
+        html.Div(html.Img(src='data:image/gif;base64,{}'.format(gif_fo), style={'width': '80%'}), style={'text-align': 'center'}),
+        html.H3("Find Historical Match",style={'marginTop':30}),
+        dcc.Markdown("""
+        To identify match in historical sequences, we employ dynamic time warping (DTW) distance. In contrast to the Euclidean distance, DTW offers greater flexibility in accommodating variations in time and window length. 
+        DTW works by aligning the two sequences in a way that minimizes the total distance between corresponding points, allowing for both temporal shifts and local deformations. This alignment is achieved by warping the time axis of one sequence with respect to the other. The warping path represents the optimal alignment, and the DTW distance is the cumulative sum of the distances along this path.
+        One of the key advantages of DTW is its ability to handle sequences of unequal length and to flexibly adapt to local variations in timing.
+        The DTW distance is computed, and if it falls below a predefined threshold, the historical sequence is classified as a match."""),
+        html.Div(html.Img(src='data:image/gif;base64,{}'.format(gif_dtw), style={'width': '80%'}), style={'text-align': 'center'})
     ],style={'marginLeft':50})
         
     ])
