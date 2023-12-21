@@ -290,6 +290,7 @@ df_plot = df_plot.sort_values('diff')
 df_plot_d = df_plot.iloc[:10]
 #df_plot_d['alpha'] = 1-df_plot_d['alpha']
 df_plot_d['diff'] = -df_plot_d['diff']
+df_plot_d = df_plot_d.sort_values('diff',ascending=True)
 
 plt.figure(figsize=(10, 6))
 ax = sns.barplot(x=df_plot_d.index, y='diff', data=df_plot_d, palette=df_plot_d['color'])
@@ -418,7 +419,7 @@ plt.box(False)
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.xticks(fontsize=20)  # Set x-axis tick font size
 plt.yticks(fontsize=20)
-#plt.legend(loc='upper left')
+plt.legend(fontsize=20)
 plt.savefig('Images/ex1_all.png', bbox_inches='tight')
 plt.show()
     
