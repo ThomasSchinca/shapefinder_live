@@ -19,7 +19,7 @@ df = pd.read_csv("https://ucdp.uu.se/downloads/ged/ged231-csv.zip",
                   parse_dates=['date_start','date_end'],low_memory=False)
 df= pd.concat([df,pd.read_csv('https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_01_23_09.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
 month = datetime.now().strftime("%m")
-for i in range(10,int(month)-1):
+for i in range(10,int(month)):
     df= pd.concat([df,pd.read_csv(f'https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_0_{i}.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
 
 df_tot = pd.DataFrame(columns=df.country.unique(),index=pd.date_range(df.date_start.min(),
@@ -137,6 +137,7 @@ world = world.merge(value_pred, how='left',on='name')
 world = world.merge(histo, how='left',on='name')
 world = world[world.name != 'Antarctica']
 world = world.fillna(0)
+world.loc[world['value'] < 0, 'value'] = 0
 world['per_pred']=world['value']/world['pop_est']
 world['log_per_pred']=np.log10(world['value']+1)
 world.to_file('world_plot.geojson', driver='GeoJSON') 
