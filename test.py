@@ -22,21 +22,34 @@ month = datetime.now().strftime("%m")
 for i in range(10,int(month)):
     df= pd.concat([df,pd.read_csv(f'https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_0_{i}.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
 
+# df_tot = pd.DataFrame(columns=df.country.unique(),index=pd.date_range(df.date_start.min(),
+#                                           df.date_end.max()))
+# df_tot=df_tot.fillna(0)
+# for i in df.country.unique():
+#     df_sub=df[df.country==i]
+#     for j in range(len(df_sub)):
+#         if df_sub.date_start.iloc[j] == df_sub.date_end.iloc[j]:
+#             df_tot.loc[df_sub.date_start.iloc[j],i]=df_tot.loc[df_sub.date_start.iloc[j],i]+df_sub.best.iloc[j]
+#         else:
+#             df_tot.loc[df_sub.date_start.iloc[j]:
+#             df_sub.date_end.iloc[j],i]=df_tot.loc[df_sub.date_start.iloc[j]: \
+#                                                   df_sub.date_end.iloc[j],i]+ \
+#                                                   df_sub.best.iloc[j]/ \
+#                                                   (df_sub.date_end.iloc[j]- \
+#                                                   df_sub.date_start.iloc[j]).days 
+
 df_tot = pd.DataFrame(columns=df.country.unique(),index=pd.date_range(df.date_start.min(),
                                           df.date_end.max()))
 df_tot=df_tot.fillna(0)
 for i in df.country.unique():
     df_sub=df[df.country==i]
     for j in range(len(df_sub)):
-        if df_sub.date_start.iloc[j] == df_sub.date_end.iloc[j]:
+        if df_sub.date_start.iloc[j].month == df_sub.date_end.iloc[j].month:
             df_tot.loc[df_sub.date_start.iloc[j],i]=df_tot.loc[df_sub.date_start.iloc[j],i]+df_sub.best.iloc[j]
         else:
-            df_tot.loc[df_sub.date_start.iloc[j]:
-            df_sub.date_end.iloc[j],i]=df_tot.loc[df_sub.date_start.iloc[j]: \
-                                                  df_sub.date_end.iloc[j],i]+ \
-                                                  df_sub.best.iloc[j]/ \
-                                                  (df_sub.date_end.iloc[j]- \
-                                                  df_sub.date_start.iloc[j]).days 
+            pass                                                    
+                                                      
+                                       
 df_tot_m=df_tot.resample('M').sum()
 last_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
 df_tot_m= df_tot_m.loc[:last_month,:]
