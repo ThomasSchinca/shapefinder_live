@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Dec 25 15:56:34 2023
+Created on Wed Nov 22 15:27:12 2023
 
 @author: thoma
 """
@@ -14,7 +14,6 @@ from matplotlib.colors import to_hex
 import matplotlib.pyplot as plt
 import geopandas as gpd
 import plotly.express as px
-import plotly.graph_objects as go
 import json
 import pandas as pd
 import pickle 
@@ -28,36 +27,6 @@ def generate_subplot(series):
                 xaxis_title='',
                 yaxis_title='')
     fig.update_traces(line=dict(color='grey'))
-    return fig
-
-def generate_subplot_sce(series,col):
-    fig = px.line(series, title=series.name)
-    fig.update_layout(
-        showlegend=False, plot_bgcolor="white",
-        margin=dict(t=30, l=30, b=5, r=5),
-        xaxis_title='',
-        yaxis_title='',
-        title=dict(text=series.name, font=dict(color=col))
-    )
-    fig.update_traces(line=dict(color='grey'))
-    last_six_points = series.tail(6)
-    last_sept_points = series.tail(7)
-    fig.add_trace(go.Scatter(
-        x=last_six_points.index,
-        y=last_six_points.values,
-        mode='markers+lines',
-        marker=dict(color=col),
-        line=dict(color=col),
-        name='Past Future'
-    ))
-    fig.add_trace(go.Scatter(
-        x=last_sept_points.index,
-        y=last_sept_points.values,
-        mode='lines',
-        marker=dict(color=col),
-        line=dict(color=col),
-        name='Past Future'
-    ))
     return fig
 
 def get_color(log_per_pr):
@@ -105,18 +74,6 @@ for key, series_int_list in dict_m.items():
 world['name_alt']= world['name'].replace(reversed_rena)
 world['color'] = world['log_per_pred'].apply(get_color)
 l_country = [dl.GeoJSON(data=json.loads(world.iloc[index:index+1].to_json()), style={'color': row['color'], 'opacity': 0, 'fillOpacity': '1'}) for index, row in world.iterrows()]
-
-df_perc = pd.read_csv('perc.csv',parse_dates=True,index_col=(0))
-df_d = pd.read_csv('dec.csv',parse_dates=True,index_col=(0))
-df_s = pd.read_csv('sta.csv',parse_dates=True,index_col=(0))
-df_i = pd.read_csv('inc.csv',parse_dates=True,index_col=(0))
-
-with open('dict_sce.pkl', 'rb') as f:
-    dict_sce = pickle.load(f)
-missing_columns.discard('Dominican Rep.')    
-dict_sce.update({col: [[],[],[]] for col in missing_columns})
-
-
 pace_png = base64.b64encode(open('PaCE_final_icon.png', 'rb').read()).decode('ascii')
 git_png = base64.b64encode(open('github-mark.png', 'rb').read()).decode('ascii')
 x_logo = base64.b64encode(open('x_logo.png', 'rb').read()).decode('ascii')
@@ -135,9 +92,6 @@ config = {'displayModeBar': False}
 
 # App layout
 home_layout = html.Div([
-    dcc.Loading(
-        id="loading-2",
-    children=[
     html.Div([
         html.Div([
            html.H2("Fatalities Risk Map",style={'textAlign': 'left', 'margin': '0', 'padding': '0'}),  # Title
@@ -194,13 +148,12 @@ home_layout = html.Div([
                       html.Div(id='plot_test2', style={'width': '100%', 'height': '100%', 'margin': '0'}),
                       html.Div(id='plot_test3', style={'width': '100%', 'height': '100%', 'margin': '0'})
                       ], style={"display": "flex", 'flexDirection': 'column','width': '30%','height': '100%', 'margin': '0'}),
-                
-        ],style={"display": "flex",'width':'100%','height': '90vh'})],style={'backgroundColor': '#F5F5F5'}),
+        ],style={"display": "flex",'width':'100%','height': '90vh','marginBottom':20})],style={'backgroundColor': '#F5F5F5'}),
     #html.Hr(style={'width': '70%','margin':'auto'}),
-    #html.Div(id='tite'),
-    html.Div(id='plot_test4',style={'marginTop':50})],
-    type="dot",fullscreen=True,color="#df2226"
-    )
+    html.Div(id='tite'),
+    html.Div([
+    html.Div(id='plot_test4')
+    ],style={'marginLeft':100})
 ])
 
 report_layout= html.Div([
@@ -315,10 +268,13 @@ about_layout=html.Div([
         
     ])
 
+
+
 @webapp.callback(Output("plot_test", "children"), 
               Output("plot_test2", "children"),
               Output("plot_test3", "children"),
               Output("plot_test4", "children"),
+              Output('tite','children'),
               Input("total_c", "clickData"),
               prevent_initial_call=True)
 
@@ -327,7 +283,7 @@ def display_country_plot(feature):
         country_name = feature['properties']['name'] 
         if country_name in hist_df.columns:
             filtered_data = hist_df.loc[:,country_name]
-            fig = px.line(x=filtered_data.index, y=filtered_data, title=country_name) 
+            fig = px.line(x=filtered_data.index, y=filtered_data, title=country_name) # Replace with actual columns
             fig.update_yaxes(visible=True, fixedrange=True)
             fig.update_layout(annotations=[], overwrite=True)
             fig.update_layout(
@@ -357,121 +313,21 @@ def display_country_plot(feature):
                 fig3 = px.bar(x=m_names, y=m_dist, title='Best Matches',
                               color_discrete_sequence=['grey']).update_layout(margin=dict(t=60,l=30,b=5,r=5), 
                               xaxis_title='',yaxis_title='',showlegend=False,plot_bgcolor="white", xaxis_tickangle=60,title=dict(text='Best Matches', font=dict(size=16, color='darkgrey'), x=0.5))
-                seq_f=df_d.loc[:,country_name]
-                figalp = px.line(x=seq_f.index, y=seq_f, title=country_name) 
-                figalp.update_yaxes(visible=True, fixedrange=True)
-                figalp.update_layout(annotations=[], overwrite=True)
-                figalp.update_layout(
-                    showlegend=False,plot_bgcolor="white",margin=dict(t=60,l=40,b=5,r=5),
-                    xaxis_title='',yaxis_title='',yaxis=dict(showgrid=True),
-                    title=dict(text=f'Decrease pr={df_perc.loc[0,country_name]}%', font=dict(size=20, color='black'), x=0.5))
-                figalp.update_traces(line=dict(color='black'))    
-                last_six_points = seq_f.tail(6)
-                last_sept_points = seq_f.tail(7)
-                figalp.add_trace(go.Scatter(
-                    x=last_six_points.index,
-                    y=last_six_points.values,
-                    mode='markers+lines',
-                    marker=dict(color='black'),
-                    line=dict(color='black'),
-                    name='Past Future'
-                ))
-                figalp.add_trace(go.Scatter(
-                    x=last_sept_points.index,
-                    y=last_sept_points.values,
-                    mode='lines',
-                    marker=dict(color='black'),
-                    line=dict(color='black')
-                ))
-                
-                
-                seq_f=df_s.loc[:,country_name]
-                figalp2 = px.line(x=seq_f.index, y=seq_f, title=country_name) 
-                figalp2.update_yaxes(visible=True, fixedrange=True)
-                figalp2.update_layout(annotations=[], overwrite=True)
-                figalp2.update_layout(
-                    showlegend=False,plot_bgcolor="white",margin=dict(t=60,l=40,b=5,r=5),
-                    xaxis_title='',yaxis_title='',yaxis=dict(showgrid=True),
-                    title=dict(text=f'Stable pr={df_perc.loc[1,country_name]}%', font=dict(size=20, color='rgb(216, 134, 141)'), x=0.5))
-                figalp2.update_traces(line=dict(color='black'))    
-                last_six_points = seq_f.tail(6)
-                last_sept_points = seq_f.tail(7)
-                figalp2.add_trace(go.Scatter(
-                    x=last_six_points.index,
-                    y=last_six_points.values,
-                    mode='markers+lines',
-                    marker=dict(color='rgb(216, 134, 141)'),
-                    line=dict(color='rgb(216, 134, 141)'),
-                    name='Past Future'
-                ))
-                figalp2.add_trace(go.Scatter(
-                    x=last_sept_points.index,
-                    y=last_sept_points.values,
-                    mode='lines',
-                    marker=dict(color='rgb(216, 134, 141)'),
-                    line=dict(color='rgb(216, 134, 141)')
-                ))
-                
-                seq_f=df_i.loc[:,country_name]
-                figalp3 = px.line(x=seq_f.index, y=seq_f, title=country_name) 
-                figalp3.update_yaxes(visible=True, fixedrange=True)
-                figalp3.update_layout(annotations=[], overwrite=True)
-                figalp3.update_layout(
-                    showlegend=False,plot_bgcolor="white",margin=dict(t=60,l=40,b=5,r=5),
-                    xaxis_title='',yaxis_title='',yaxis=dict(showgrid=True),
-                    title=dict(text=f'Increase pr={df_perc.loc[2,country_name]}%', font=dict(size=20, color='red'), x=0.5))
-                figalp3.update_traces(line=dict(color='black'))    
-                last_six_points = seq_f.tail(6)
-                last_sept_points = seq_f.tail(7)
-                figalp3.add_trace(go.Scatter(
-                    x=last_six_points.index,
-                    y=last_six_points.values,
-                    mode='markers+lines',
-                    marker=dict(color='red'),
-                    line=dict(color='red'),
-                    name='Past Future'
-                ))
-                figalp3.add_trace(go.Scatter(
-                    x=last_sept_points.index,
-                    y=last_sept_points.values,
-                    mode='lines',
-                    marker=dict(color='red'),
-                    line=dict(color='red')
-                ))
-                
-                figd = [generate_subplot_sce(series,'black') for series in dict_sce[country_name][0]]
-                figs = [generate_subplot_sce(series,'rgb(216, 134, 141)') for series in dict_sce[country_name][1]]
-                figi = [generate_subplot_sce(series,'red') for series in dict_sce[country_name][2]]
-                sce = html.Div([
-                    html.Div([
-                        dcc.Graph(figure=figalp,style={'width': '33%', 'height': '230px','marginLeft':70},config=config),
-                        dcc.Graph(figure=figalp2,style={'width': '33%', 'height': '230px'},config=config),
-                        dcc.Graph(figure=figalp3,style={'width': '33%', 'height': '230px'},config=config)],style={"display": "flex", 'flexDirection': 'row','marginTop':30}),
-                    html.Div([
-                      html.Div([dcc.Graph(figure=fig,style={'width': '400px', 'height': '230px'},config=config) for fig in figd],style={"display": "flex", 'flexDirection': 'column','marginLeft':70,'width': '33%'}),
-                      html.Div([dcc.Graph(figure=fig,style={'width': '400px', 'height': '230px'},config=config) for fig in figs],style={"display": "flex", 'flexDirection': 'column','width': '33%'}),
-                      html.Div([dcc.Graph(figure=fig,style={'width': '400px', 'height': '230px'},config=config) for fig in figi],style={"display": "flex", 'flexDirection': 'column','width': '33%'})
-                    ],style={"display": "flex", 'flexDirection': 'inline'})
-                ])                          
-            
             else:
                 fig3 = px.bar().update_layout(margin=dict(t=30,l=30,b=5,r=5), 
                 xaxis_title='',yaxis_title='',showlegend=False,plot_bgcolor="white",title=dict(text='Best Matches', font=dict(size=16, color='darkgrey'), x=0.5))        
                 fig3.update_xaxes(showticklabels=False)
-                fig3.update_yaxes(showticklabels=False)  
-                sce=[]                                   
+                fig3.update_yaxes(showticklabels=False)                                     
             figs = [generate_subplot(series) for series in new_dict[country_name]]
             rows = []
             for i in range(0, len(figs), 3):
-                row = html.Div([dcc.Graph(figure=fig,style={'width': '400px', 'height': '230px'},config=config) for fig in figs[i:i+3]], className='row',style={"display": "flex",'marginLeft':100,'marginTop':20})
+                row = html.Div([dcc.Graph(figure=fig,style={'width': '400px', 'height': '230px'},config=config) for fig in figs[i:i+3]], className='row',style={"display": "flex"})
                 rows.append(row)
-            
             
             return (dcc.Graph(figure=fig,style={'width': '400px', 'height': '240px','margin':'0'},config=config),
                     dcc.Graph(figure=fig2,style={'width': '400px', 'height': '240px','margin':'0'},config=config),
                     dcc.Graph(figure=fig3,style={'width': '400px', 'height': '240px','margin':'0'},config=config),
-                    dcc.Tabs([dcc.Tab(label='Matched Sequences',children=rows,value='tab-1'),dcc.Tab(label='Scenarios',children=sce,value='tab-2')],colors={"border": "#555", 'background': '#D3D3D3'}))
-
+                    rows,html.H3(children='Matched Sequences',style = {'textAlign': 'center','marginBottom':40,'marginTop':20,'color': 'grey'}))
 
 @webapp.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])

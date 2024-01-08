@@ -94,30 +94,30 @@ for i in range(10):
     
     
 
-API_key ='iKE87AGJhYpj2dlZpBba57Ohf'
-key_secret ='w3RYtCA3kQJc0wImvEYWTQu5iTY9MrA0riVBceehAVT5Zomvy6'
-access_token='1618319345720909838-axd6L7hd3q9f7ISYQ4kHrb7mH2Btw1'
-secret_token='JlaVU540DRUSPbarc70SFj1EzxTpjJ2QmmAwyFK3dhRzE'
+# API_key ='iKE87AGJhYpj2dlZpBba57Ohf'
+# key_secret ='w3RYtCA3kQJc0wImvEYWTQu5iTY9MrA0riVBceehAVT5Zomvy6'
+# access_token='1618319345720909838-axd6L7hd3q9f7ISYQ4kHrb7mH2Btw1'
+# secret_token='JlaVU540DRUSPbarc70SFj1EzxTpjJ2QmmAwyFK3dhRzE'
 
-client_id = 'TU54MnlxRG9ySV9xajRvaDRDbWI6MTpjaQ'
-client_sec='f9BlnK1v6AHAl198Ap4DYzv8NQo38G-Vd5M8wSSvUQk6xfUNgp'
-bearer_tok='AAAAAAAAAAAAAAAAAAAAAHKJrQEAAAAA16QgTBO%2B1Fq10JsVkzWFvVgTNMw%3D6s601sGIPqThS2pQMwMhvJHDcBRNL2rlbAVNUKJvxntyAae7cv'
+# client_id = 'TU54MnlxRG9ySV9xajRvaDRDbWI6MTpjaQ'
+# client_sec='f9BlnK1v6AHAl198Ap4DYzv8NQo38G-Vd5M8wSSvUQk6xfUNgp'
+# bearer_tok='AAAAAAAAAAAAAAAAAAAAAHKJrQEAAAAA16QgTBO%2B1Fq10JsVkzWFvVgTNMw%3D6s601sGIPqThS2pQMwMhvJHDcBRNL2rlbAVNUKJvxntyAae7cv'
 
-auth = tweepy.OAuth1UserHandler(API_key, key_secret)
-auth.set_access_token(access_token, secret_token)
+# auth = tweepy.OAuth1UserHandler(API_key, key_secret)
+# auth.set_access_token(access_token, secret_token)
 
-api = tweepy.API(auth)
-media = api.media_upload('github-mark.png')
-media_id = media.media_id
+# api = tweepy.API(auth)
+# media = api.media_upload('github-mark.png')
+# media_id = media.media_id
 
 
-c_1='Test1'
-c_2='Test2'
-mon=datetime.now().strftime("%B")
-ye= datetime.now().strftime("%Y")
-message = f"We're observing a striking resemblance in conflict fatalities patterns: Current trends in Country @{c_1} (up to this month) closely mirror those of @{c_2} starting in @{mon}-@{ye}. The red line shows the unfolding events in @{c_2}."
-client = tweepy.Client(bearer_token=bearer_tok,consumer_key=API_key,consumer_secret=key_secret,access_token=access_token,access_token_secret=secret_token)
-client.create_tweet(text=message, media_ids=[media_id])
+# c_1='Test1'
+# c_2='Test2'
+# mon=datetime.now().strftime("%B")
+# ye= datetime.now().strftime("%Y")
+# message = f"We're observing a striking resemblance in conflict fatalities patterns: Current trends in Country @{c_1} (up to this month) closely mirror those of @{c_2} starting in @{mon}-@{ye}. The red line shows the unfolding events in @{c_2}."
+# client = tweepy.Client(bearer_token=bearer_tok,consumer_key=API_key,consumer_secret=key_secret,access_token=access_token,access_token_secret=secret_token)
+# client.create_tweet(text=message, media_ids=[media_id])
 
 
 
