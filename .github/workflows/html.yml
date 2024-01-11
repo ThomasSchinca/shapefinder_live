@@ -14,6 +14,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    
+    - name: Install Poppler
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y poppler-utils
 
     - name: Set up Python
       uses: actions/setup-python@v2
