@@ -2,7 +2,7 @@ name: Create HTML
 
 on:
   workflow_run:
-      workflows: ["create_pdf"]
+      workflows: ["Create PDF"]
       types:
         - completed
   workflow_dispatch:
