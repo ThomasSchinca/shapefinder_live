@@ -125,6 +125,8 @@ gif_dtw = base64.b64encode(open('Images/dtw.gif', 'rb').read()).decode('ascii')
 ab1 = base64.b64encode(open('Images/about_1.png', 'rb').read()).decode('ascii')
 ab2 = base64.b64encode(open('Images/about_2.png', 'rb').read()).decode('ascii')
 ab3 = base64.b64encode(open('Images/about_3.png', 'rb').read()).decode('ascii')
+ab4 = base64.b64encode(open('Images/about_4.png', 'rb').read()).decode('ascii')
+
 
 external_stylesheets=[dbc.themes.LUX]
 webapp = dash.Dash(__name__,external_stylesheets=external_stylesheets)
@@ -182,14 +184,18 @@ home_layout = html.Div([
                 })], href='https://twitter.com/LabConflict')# Logo on the right# Logo on the right
         ], style={'backgroundColor': '#D3D3D3', 'padding': '8px','marginBottom':20, 'display': 'flex'}),
         html.Div([
-            dl.Map(center=[38, 5], zoom=2,minZoom=2, children=l_country+[
+            dl.Map(center=[18, 5], zoom=2,minZoom=2, children=l_country+[
                 dl.GeoJSON(url='/assets/world_plot.geojson',id='total_c',style={'color': 'black', 'weight': 1, 'opacity': 1, 'fillOpacity': 0})
             ], style={'width': 1700,'height':'100%','backgroundColor': '#F5F5F5','marginLeft':150},zoomControl=False,attributionControl=False, id='map'),
             html.Div([dcc.Markdown('source data : [UCDP](https://ucdp.uu.se/downloads/)',style={
                     'position': 'absolute',
-                    'left': '120px',
-                    'top': '700px'
+                    'left': '820px',
+                    'top': '750px'
                 })]),
+            html.Div([dcc.Markdown('''Color-coded map indicating risk levels. The risk level corresponds to the log value
+                                   of the sum of the 6-month future values of matched historical cases. The more red the country, 
+                                   the higher risk value. Clicking on a country reveals Country-specific Data.
+                                   ''',style={'position': 'absolute','left': '20px','top': '500px','width':'15%'})]),
             html.Div([html.Div(id='plot_test', style={'width': '100%', 'height': '100%', 'margin': '0'}),
                       html.Div(id='plot_test2', style={'width': '100%', 'height': '100%', 'margin': '0'}),
                       html.Div(id='plot_test3', style={'width': '100%', 'height': '100%', 'margin': '0'})
@@ -197,8 +203,8 @@ home_layout = html.Div([
                 
         ],style={"display": "flex",'width':'100%','height': '90vh'})],style={'backgroundColor': '#F5F5F5'}),
     #html.Hr(style={'width': '70%','margin':'auto'}),
-    #html.Div(id='tite'),
-    html.Div(id='plot_test4',style={'marginTop':50})],
+    html.Div(style={'width':'100%','height': '5vh','backgroundColor': '#F5F5F5'}),
+    html.Div(id='plot_test4')],
     type="dot",fullscreen=True,color="#df2226"
     )
 ])
@@ -293,8 +299,9 @@ about_layout=html.Div([
         html.H3("Functionality",style={'marginTop':30}),
         html.Div(html.Img(src='data:image/png;base64,{}'.format(ab1), style={'width': '80%'}), style={'text-align': 'center'}),
         html.Div(html.Img(src='data:image/png;base64,{}'.format(ab2), style={'width': '80%'}), style={'text-align': 'center'}),
-        html.Div(html.Img(src='data:image/png;base64,{}'.format(ab3), style={'width': '80%'}), style={'text-align': 'center'}),
-        html.H3("Data Sources",style={'marginTop':30}),
+        html.Div(html.Img(src='data:image/png;base64,{}'.format(ab3), style={'width': '80%','marginTop':80}), style={'text-align': 'center'}),
+        html.Div(html.Img(src='data:image/png;base64,{}'.format(ab4), style={'width': '80%','marginTop':80}), style={'text-align': 'center'}),
+        html.H3("Data Sources",style={'marginTop':80}),
         
         dcc.Markdown("""
         - **Conflict-Fatalities:**[UCDP Dataset](https://ucdp.uu.se/downloads/), aggregated at the country-monthly level.
