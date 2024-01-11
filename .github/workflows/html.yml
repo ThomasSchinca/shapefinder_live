@@ -40,4 +40,4 @@ jobs:
         author_email: 41898282+github-actions[bot]@users.noreply.github.com
         github_token: ${{ secrets.GITHUB_TOKEN }}
         message: "chore: Update Newsletter"
-        add: "*.html"
+        add: "*.html *.png"
