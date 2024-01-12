@@ -183,6 +183,8 @@ home_layout = html.Div([
                     'width': '35px'
                 })], href='https://twitter.com/LabConflict')# Logo on the right# Logo on the right
         ], style={'backgroundColor': '#D3D3D3', 'padding': '8px','marginBottom':20, 'display': 'flex'}),
+        html.Div([dcc.Markdown(''' The Fatalities Risk Map assesses conflict risks by analyzing historical conflict data. It predicts future trends in fatalities by identifying countries with similar conflict histories, thereby highlighting comparable risk trajectories. Click on a country to show country-specific data
+                               ''',style={'marginLeft': '10%','width':'80%'})]),
         html.Div([
             dl.Map(center=[18, 5], zoom=2,minZoom=2, children=l_country+[
                 dl.GeoJSON(url='/assets/world_plot.geojson',id='total_c',style={'color': 'black', 'weight': 1, 'opacity': 1, 'fillOpacity': 0})
@@ -192,10 +194,11 @@ home_layout = html.Div([
                     'left': '820px',
                     'top': '750px'
                 })]),
-            html.Div([dcc.Markdown('''Color-coded map indicating risk levels. The risk level corresponds to the log value
-                                   of the sum of the 6-month future values of matched historical cases. The more red the country, 
-                                   the higher risk value. Clicking on a country reveals Country-specific Data.
-                                   ''',style={'position': 'absolute','left': '20px','top': '500px','width':'15%'})]),
+            html.Div([dcc.Markdown(''' Our map uses different colors to show how risky each country is based on past conflicts.
+                                   The risk for each country is calculated by looking at similar situations from history and 
+                                   estimating what might happen in the next six months. Countries shown in darker red are at 
+                                   higher risk, while those with lighter colors are at lower risk.
+                                   ''',style={'position': 'absolute','left': '20px','top': '540px','width':'20%'})]),
             html.Div([html.Div(id='plot_test', style={'width': '100%', 'height': '100%', 'margin': '0'}),
                       html.Div(id='plot_test2', style={'width': '100%', 'height': '100%', 'margin': '0'}),
                       html.Div(id='plot_test3', style={'width': '100%', 'height': '100%', 'margin': '0'})
