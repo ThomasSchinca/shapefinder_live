@@ -28,6 +28,10 @@ pdfmetrics.registerFont(TTFont('Poppins', poppins_regular_path))
 
 month = datetime.now().strftime("%B")
 year = datetime.now().strftime("%Y")
+teasing = date.today() + relativedelta(months=+1)
+month_t = teasing.strftime("%B")
+s_month_t = teasing.strftime("%b")
+year_t = teasing.strftime("%Y")
 month_s = datetime.now().strftime("%b")
 six_months = date.today() + relativedelta(months=+5)
 sm_m = six_months.strftime("%b")
@@ -37,8 +41,8 @@ sm_y = six_months.strftime("%Y")
 # Define the path for the new PDF and the uploaded image
 output_pdf_path = 'assets/Report.pdf'
 c = canvas.Canvas(output_pdf_path, pagesize=letter)
-
-title_text = f'Patterns of Conflict ({month} {year} Newsletter)'
+c.setTitle(f"Report {s_month_t}-{year_t}")
+title_text = f'Patterns of Conflict ({month_t} {year_t} Newsletter)'
 title_font = "Poppins-Bold"  
 title_font_size = 22
 title_color = HexColor("#df2226")
