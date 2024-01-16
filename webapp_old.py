@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jan 15 22:24:43 2024
+Created on Mon Dec 25 15:56:34 2023
 
 @author: thoma
 """
+
 import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
@@ -103,7 +104,7 @@ for key, series_int_list in dict_m.items():
 
 world['name_alt']= world['name'].replace(reversed_rena)
 world['color'] = world['log_per_pred'].apply(get_color)
-l_country = [dl.GeoJSON(data=json.loads(world.iloc[index:index+1].to_json()), style={'color': row['color'], 'opacity': 0, 'fillOpacity': '1','z-index':1}) for index, row in world.iterrows()]
+l_country = [dl.GeoJSON(data=json.loads(world.iloc[index:index+1].to_json()), style={'color': row['color'], 'opacity': 0, 'fillOpacity': '1'}) for index, row in world.iterrows()]
 
 df_perc = pd.read_csv('perc.csv',parse_dates=True,index_col=(0))
 df_d = pd.read_csv('dec.csv',parse_dates=True,index_col=(0))
@@ -127,9 +128,8 @@ ab3 = base64.b64encode(open('Images/about_3.png', 'rb').read()).decode('ascii')
 ab4 = base64.b64encode(open('Images/about_4.png', 'rb').read()).decode('ascii')
 
 
-webapp = dash.Dash(__name__,external_stylesheets=[dbc.themes.BOOTSTRAP,dbc.themes.LUX],
-                    meta_tags=[{'name': 'viewport',
-                                'content': 'width=device-width, initial-scale=1.0, maximum-scale=1.2, minimum-scale=0.5,'}])
+external_stylesheets=[dbc.themes.LUX]
+webapp = dash.Dash(__name__,external_stylesheets=external_stylesheets)
 webapp.title = 'Pace Risk Map'
 webapp._favicon = ("icone_pace.ico")
 server = webapp.server
@@ -141,94 +141,150 @@ home_layout = html.Div([
         id="loading-2",
     children=[
     html.Div([
-        dbc.Container([
-                dbc.Row([
-                    dbc.Col(html.Div([
-                        html.H2("Fatalities Risk Map", style={'textAlign': 'left','width':'80%'}),
-                        dbc.Nav([
-                            dbc.NavLink("Try The Model", href="https://shapefinder.azurewebsites.net/", style={'color': '#555'}),
-                            dbc.NavLink("Monthly Report", href="/report", style={'color': '#555'}),
-                            dbc.NavLink("About", href="/about", style={'color': '#555'}),
-                            dbc.NavLink("The Team", href="https://paceconflictlab.wixsite.com/conflict-research-la/team-4", style={'color': '#555'}),
-                            dbc.NavLink("Contact", href="mailto:schincat@tcd.ie", style={'color': '#555'})
-                        ]),
-                    ]), lg=12, md=12, sm=12)
-                ], style={'backgroundColor': '#D3D3D3', 'padding': '8px', 'marginBottom': '2vh'})
-        ], fluid=True),
         html.Div([
-            html.A(html.Img(src='data:image/png;base64,{}'.format(pace_png), style={'height': '5vw', 'width': '5vw', 'marginLeft': '1vw'}), href='https://paceconflictlab.wixsite.com/conflict-research-la'),
-            html.A(html.Img(src='data:image/png;base64,{}'.format(git_png), style={'height': '5vw', 'width': '5vw', 'marginLeft': '1vw'}), href='https://github.com/ThomasSchinca/shapefinder_live'),
-            html.A(html.Img(src='data:image/png;base64,{}'.format(x_logo), style={'height': '5vw', 'width': '5vw', 'marginLeft': '1vw'}), href='https://twitter.com/LabConflict')
-        ], style={'position': 'absolute', 'right': '3vw', 'top': '1vh'}),
-    dbc.Container(fluid=True, children=[
-        dbc.Row([
-            dbc.Col(dcc.Markdown('''The Fatalities Risk Map assesses conflict risks by analyzing historical conflict data. It predicts future trends in fatalities by identifying countries with similar conflict histories, thereby highlighting comparable risk trajectories. Click on a country to show country-specific data.'''), 
-                    width=12, style={'marginLeft': '5vw', 'width': '90vw'},id='parag')
-        ]),
-        dbc.Row([
-            dbc.Col(dl.Map(center=[18, 5], zoom=2, minZoom=2, children=l_country + [
-                dl.GeoJSON(url='/assets/world_plot.geojson', id='total_c', style={'color': 'black', 'weight': 1, 'opacity': 1, 'fillOpacity': 0})
-            ], style={'width': '95vw', 'height': '78vh', 'backgroundColor': '#F5F5F5','z-index':1}, zoomControl=False, attributionControl=False,maxBounds=[[-45, -180], [90, 180]], id='map'), 
-                    width=12)
-        ]),
+           html.H2("Fatalities Risk Map",style={'textAlign': 'left', 'margin': '0', 'padding': '0'}),  # Title
+           html.A([html.H4("Try The model", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':50})],
+                  href="https://shapefinder.azurewebsites.net/",
+                   style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
+           html.A([html.H4("Monthly report", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':50})],
+                  href="/report" ,#href="assets/Report.pdf",download="Pace_Monthly_Report.pdf",
+                   style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
+           html.A([html.H4("About", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':50})],
+                  href="/about" ,#assets/Web_docu.pdf",download="Documentation.pdf",
+                   style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
+           html.A([html.H4("The Team", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':50})],
+                  href="https://paceconflictlab.wixsite.com/conflict-research-la/team-4",
+                   style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
+           html.A([html.H4("Contact", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':85})],
+                  href="mailto:schincat@tcd.ie",
+                   style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
+           html.A([html.Img(src='data:image/png;base64,{}'.format(pace_png),style={
+                   'position': 'absolute',
+                   'right': '20px',
+                   'top': '10px',
+                   'display': 'block',
+                   'height': '35px',
+                   'width': '35px'
+               })], href='https://paceconflictlab.wixsite.com/conflict-research-la'),
+            html.A([html.Img(src='data:image/png;base64,{}'.format(git_png),style={
+                    'position': 'absolute',
+                    'right': '70px',
+                    'top': '10px',
+                    'display': 'block',
+                    'height': '35px',
+                    'width': '35px'
+                })], href='https://github.com/ThomasSchinca/shapefinder_live'),
+            html.A([html.Img(src='data:image/png;base64,{}'.format(x_logo),style={
+                    'position': 'absolute',
+                    'right': '120px',
+                    'top': '10px',
+                    'display': 'block',
+                    'height': '35px',
+                    'width': '35px'
+                })], href='https://twitter.com/LabConflict')# Logo on the right# Logo on the right
+        ], style={'backgroundColor': '#D3D3D3', 'padding': '8px','marginBottom':20, 'display': 'flex'}),
+        html.Div([dcc.Markdown(''' The Fatalities Risk Map assesses conflict risks by analyzing historical conflict data. It predicts future trends in fatalities by identifying countries with similar conflict histories, thereby highlighting comparable risk trajectories. Click on a country to show country-specific data
+                               ''',style={'marginLeft': '10%','width':'80%'})]),
         html.Div([
-            html.Div(id='plot_test'),
-            html.Div(id='plot_test2'),
-            html.Div(id='plot_test3')
-            ], id='responsive-div')
-        ]),  
-    ],style={'backgroundColor': '#F5F5F5'}),
-    html.Div(id='space',style={'width':'100%','height': '5vh','backgroundColor': '#F5F5F5'},children=[
-        dbc.Row([
-            dbc.Col(dcc.Markdown('source data : [UCDP](https://ucdp.uu.se/downloads/)', style={
-                'marginLeft':'40vw'}), width=12)
-        ]),]),
+            dl.Map(center=[18, 5], zoom=2,minZoom=2, children=l_country+[
+                dl.GeoJSON(url='/assets/world_plot.geojson',id='total_c',style={'color': 'black', 'weight': 1, 'opacity': 1, 'fillOpacity': 0})
+            ], style={'width': 1700,'height':'100%','backgroundColor': '#F5F5F5','marginLeft':150},zoomControl=False,attributionControl=False, id='map'),
+            html.Div([dcc.Markdown('source data : [UCDP](https://ucdp.uu.se/downloads/)',style={
+                    'position': 'absolute',
+                    'left': '820px',
+                    'top': '750px'
+                })]),
+            html.Div([dcc.Markdown(''' Our map uses different colors to show how risky each country is based on past conflicts.
+                                   The risk for each country is calculated by looking at similar situations from history and 
+                                   estimating what might happen in the next six months. Countries shown in darker red are at 
+                                   higher risk, while those with lighter colors are at lower risk.
+                                   ''',style={'position': 'absolute','left': '20px','top': '540px','width':'20%'})]),
+            html.Div([html.Div(id='plot_test', style={'width': '100%', 'height': '100%', 'margin': '0'}),
+                      html.Div(id='plot_test2', style={'width': '100%', 'height': '100%', 'margin': '0'}),
+                      html.Div(id='plot_test3', style={'width': '100%', 'height': '100%', 'margin': '0'})
+                      ], style={"display": "flex", 'flexDirection': 'column','width': '30%','height': '100%', 'margin': '0'}),
+                
+        ],style={"display": "flex",'width':'100%','height': '90vh'})],style={'backgroundColor': '#F5F5F5'}),
+    #html.Hr(style={'width': '70%','margin':'auto'}),
+    html.Div(style={'width':'100%','height': '5vh','backgroundColor': '#F5F5F5'}),
     html.Div(id='plot_test4')],
     type="dot",fullscreen=True,color="#df2226"
     )
 ])
 
 report_layout= html.Div([
-    dbc.Container([
-            dbc.Row([
-                dbc.Col(html.Div([
-                    html.H2("Report", style={'textAlign': 'left'}),
-                    dbc.Nav([
-                        dbc.NavLink("Risk Map", href="/home", style={'color': '#555'}),
-                        dbc.NavLink("About", href="/about", style={'color': '#555'}),
-                        dbc.NavLink("The Team", href="https://paceconflictlab.wixsite.com/conflict-research-la/team-4", style={'color': '#555'}),
-                        dbc.NavLink("Contact", href="mailto:schincat@tcd.ie", style={'color': '#555'})
-                    ]),
-                    html.Div([
-                        html.A(html.Img(src='data:image/png;base64,{}'.format(pace_png), style={'height': '5vw', 'width': '5vw', 'marginLeft': '1vw'}), href='https://paceconflictlab.wixsite.com/conflict-research-la'),
-                        html.A(html.Img(src='data:image/png;base64,{}'.format(git_png), style={'height': '5vw', 'width': '5vw', 'marginLeft': '1vw'}), href='https://github.com/ThomasSchinca/shapefinder_live'),
-                        html.A(html.Img(src='data:image/png;base64,{}'.format(x_logo), style={'height': '5vw', 'width': '5vw', 'marginLeft': '1vw'}), href='https://twitter.com/LabConflict')
-                    ], style={'position': 'absolute', 'right': '3vw', 'top': '1vh'})
-                ]), lg=12, md=12, sm=12)
-            ], style={'backgroundColor': '#D3D3D3', 'padding': '8px', 'marginBottom': 20})
-    ], fluid=True),
-    html.Iframe(src='assets/Report.pdf', width='80%', height= '1000vh',style={'marginLeft':'10%'}),
+    html.Div([
+        html.Div([
+           html.H2("Report",style={'textAlign': 'left', 'margin': '0', 'padding': '0'}),  # Title
+           html.A([html.H4("Back to map", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':50})],
+                  href="/home",
+                   style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
+           html.A([html.H4("Contact", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':845})],
+                  href="mailto:schincat@tcd.ie",
+                   style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
+           html.A([html.Img(src='data:image/png;base64,{}'.format(pace_png),style={
+                   'position': 'absolute',
+                   'right': '20px',
+                   'top': '10px',
+                   'display': 'block',
+                   'height': '35px',
+                   'width': '35px'
+               })], href='https://paceconflictlab.wixsite.com/conflict-research-la'),
+            html.A([html.Img(src='data:image/png;base64,{}'.format(git_png),style={
+                    'position': 'absolute',
+                    'right': '70px',
+                    'top': '10px',
+                    'display': 'block',
+                    'height': '35px',
+                    'width': '35px'
+                })], href='https://github.com/ThomasSchinca/shapefinder_live'),
+            html.A([html.Img(src='data:image/png;base64,{}'.format(x_logo),style={
+                    'position': 'absolute',
+                    'right': '120px',
+                    'top': '10px',
+                    'display': 'block',
+                    'height': '35px',
+                    'width': '35px'
+                })], href='https://twitter.com/LabConflict')# Logo on the right# Logo on the right
+        ], style={'backgroundColor': '#D3D3D3', 'padding': '8px','marginBottom':20, 'display': 'flex'})]),
+    html.Iframe(src='assets/Report.pdf', width='80%', height='800px',style={'marginLeft':160}),
 ])
 
 about_layout=html.Div([
-    dbc.Container([
-            dbc.Row([
-                dbc.Col(html.Div([
-                    html.H2("About", style={'textAlign': 'left'}),
-                    dbc.Nav([
-                        dbc.NavLink("Risk Map", href="/home", style={'color': '#555'}),
-                        dbc.NavLink("Monthly Report", href="/report", style={'color': '#555'}),
-                        dbc.NavLink("The Team", href="https://paceconflictlab.wixsite.com/conflict-research-la/team-4", style={'color': '#555'}),
-                        dbc.NavLink("Contact", href="mailto:schincat@tcd.ie", style={'color': '#555'})
-                    ]),
-                    html.Div([
-                        html.A(html.Img(src='data:image/png;base64,{}'.format(pace_png), style={'height': '5vw', 'width': '5vw', 'marginLeft': '1vw'}), href='https://paceconflictlab.wixsite.com/conflict-research-la'),
-                        html.A(html.Img(src='data:image/png;base64,{}'.format(git_png), style={'height': '5vw', 'width': '5vw', 'marginLeft': '1vw'}), href='https://github.com/ThomasSchinca/shapefinder_live'),
-                        html.A(html.Img(src='data:image/png;base64,{}'.format(x_logo), style={'height': '5vw', 'width': '5vw', 'marginLeft': '1vw'}), href='https://twitter.com/LabConflict')
-                    ], style={'position': 'absolute', 'right': '3vw', 'top': '1vh'})
-                ]), lg=12, md=12, sm=12)
-            ], style={'backgroundColor': '#D3D3D3', 'padding': '8px', 'marginBottom': 20})
-    ], fluid=True),
+    html.Div([
+        html.Div([
+           html.H2("About",style={'textAlign': 'left', 'margin': '0', 'padding': '0'}),  # Title
+           html.A([html.H4("Back to map", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':50})],
+                  href="/home",
+                   style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
+           html.A([html.H4("Contact", style={'textAlign': 'left', 'color': '#555', 'fontSize': '16px','marginTop':10,'marginLeft':855})],
+                  href="mailto:schincat@tcd.ie",
+                   style={'color': '#555', 'fontSize': '14px','textDecoration': 'none'}),
+           html.A([html.Img(src='data:image/png;base64,{}'.format(pace_png),style={
+                   'position': 'absolute',
+                   'right': '20px',
+                   'top': '10px',
+                   'display': 'block',
+                   'height': '35px',
+                   'width': '35px'
+               })], href='https://paceconflictlab.wixsite.com/conflict-research-la'),
+            html.A([html.Img(src='data:image/png;base64,{}'.format(git_png),style={
+                    'position': 'absolute',
+                    'right': '70px',
+                    'top': '10px',
+                    'display': 'block',
+                    'height': '35px',
+                    'width': '35px'
+                })], href='https://github.com/ThomasSchinca/shapefinder_live'),
+            html.A([html.Img(src='data:image/png;base64,{}'.format(x_logo),style={
+                    'position': 'absolute',
+                    'right': '120px',
+                    'top': '10px',
+                    'display': 'block',
+                    'height': '35px',
+                    'width': '35px'
+                })], href='https://twitter.com/LabConflict')# Logo on the right# Logo on the right
+        ], style={'backgroundColor': '#D3D3D3', 'padding': '8px','marginBottom':20, 'display': 'flex'})]),
     
     html.Div([
         html.H1("Pace Risk Map Web Application", style={'marginBottom':20,'textAlign': 'center'}),
@@ -396,36 +452,18 @@ def display_country_plot(feature):
                 figd = [generate_subplot_sce(series,'black') for series in dict_sce[country_name][0]]
                 figs = [generate_subplot_sce(series,'rgb(216, 134, 141)') for series in dict_sce[country_name][1]]
                 figi = [generate_subplot_sce(series,'red') for series in dict_sce[country_name][2]]
-                # sce = html.Div([
-                #     # First row of graphs
-                #     html.Div([
-                #         dcc.Graph(figure=figalp, style={'width': '33vw', 'height': '30vh'}, config=config),
-                #         dcc.Graph(figure=figalp2, style={'width': '33vw', 'height': '30vh'}, config=config),
-                #         dcc.Graph(figure=figalp3, style={'width': '33vw', 'height': '30vh'}, config=config)
-                #     ], style={"display": "flex", 'flexDirection': 'row', 'marginTop': '3vh'}),
-                
-                #     # Second row of graphs
-                #     html.Div([
-                #         html.Div([dcc.Graph(figure=fig, style={'width': '33vw', 'height': '23vh'}, config=config) for fig in figd], style={"display": "flex", 'flexDirection': 'column', 'width': '33vw'}),
-                #         html.Div([dcc.Graph(figure=fig, style={'width': '33vw', 'height': '23vh'}, config=config) for fig in figs], style={"display": "flex", 'flexDirection': 'column', 'width': '33vw'}),
-                #         html.Div([dcc.Graph(figure=fig, style={'width': '33vw', 'height': '23vh'}, config=config) for fig in figi], style={"display": "flex", 'flexDirection': 'column', 'width': '33vw'})
-                #     ], style={"display": "flex", 'flexDirection': 'row'})
-                # ])   
                 sce = html.Div([
-                    # First row of graphs
                     html.Div([
-                        dcc.Graph(figure=figalp, className='sub-graph-sce', config=config),
-                        html.Div([dcc.Graph(figure=fig, className='sub-graph-sce', config=config) for fig in figd], style={"display": "flex", 'flexDirection': 'column'})
-                    ], style={ 'marginTop': '3vh'}),
+                        dcc.Graph(figure=figalp,style={'width': '33%', 'height': '230px','marginLeft':70},config=config),
+                        dcc.Graph(figure=figalp2,style={'width': '33%', 'height': '230px'},config=config),
+                        dcc.Graph(figure=figalp3,style={'width': '33%', 'height': '230px'},config=config)],style={"display": "flex", 'flexDirection': 'row','marginTop':30}),
                     html.Div([
-                        dcc.Graph(figure=figalp2, className='sub-graph-sce', config=config),
-                        html.Div([dcc.Graph(figure=fig, className='sub-graph-sce', config=config) for fig in figs], style={"display": "flex", 'flexDirection': 'column'})
-                    ], style={'marginTop': '3vh'}),
-                    html.Div([
-                        dcc.Graph(figure=figalp3, className='sub-graph-sce', config=config),
-                        html.Div([dcc.Graph(figure=fig, className='sub-graph-sce', config=config) for fig in figi], style={"display": "flex", 'flexDirection': 'column'})
-                    ], style={ 'marginTop': '3vh'}),
-                ],className='graph-container-sce')   
+                      html.Div([dcc.Graph(figure=fig,style={'width': '400px', 'height': '230px'},config=config) for fig in figd],style={"display": "flex", 'flexDirection': 'column','marginLeft':70,'width': '33%'}),
+                      html.Div([dcc.Graph(figure=fig,style={'width': '400px', 'height': '230px'},config=config) for fig in figs],style={"display": "flex", 'flexDirection': 'column','width': '33%'}),
+                      html.Div([dcc.Graph(figure=fig,style={'width': '400px', 'height': '230px'},config=config) for fig in figi],style={"display": "flex", 'flexDirection': 'column','width': '33%'})
+                    ],style={"display": "flex", 'flexDirection': 'inline'})
+                ])                          
+            
             else:
                 fig3 = px.bar().update_layout(margin=dict(t=30,l=30,b=5,r=5), 
                 xaxis_title='',yaxis_title='',showlegend=False,plot_bgcolor="white",title=dict(text='Best Matches', font=dict(size=16, color='darkgrey'), x=0.5))        
@@ -435,14 +473,13 @@ def display_country_plot(feature):
             figs = [generate_subplot(series) for series in new_dict[country_name]]
             rows = []
             for i in range(0, len(figs), 3):
-                row = html.Div([dcc.Graph(figure=fig,className='sub-graph',config=config) for fig in figs[i:i+3]], className='graph-container',style={"display": "flex"})
+                row = html.Div([dcc.Graph(figure=fig,style={'width': '400px', 'height': '230px'},config=config) for fig in figs[i:i+3]], className='row',style={"display": "flex",'marginLeft':100,'marginTop':20})
                 rows.append(row)
-
-
             
-            return (dcc.Graph(figure=fig,className='plot-emb',config=config),
-                    dcc.Graph(figure=fig2,className='plot-emb',config=config),
-                    dcc.Graph(figure=fig3,className='plot-emb',config=config),
+            
+            return (dcc.Graph(figure=fig,style={'width': '400px', 'height': '240px','margin':'0'},config=config),
+                    dcc.Graph(figure=fig2,style={'width': '400px', 'height': '240px','margin':'0'},config=config),
+                    dcc.Graph(figure=fig3,style={'width': '400px', 'height': '240px','margin':'0'},config=config),
                     dcc.Tabs([dcc.Tab(label='Matched Sequences',children=rows,value='tab-1'),dcc.Tab(label='Scenarios',children=sce,value='tab-2')],colors={"border": "#555", 'background': '#D3D3D3'}))
 
 
