@@ -17,26 +17,10 @@ import os
 
 df = pd.read_csv("https://ucdp.uu.se/downloads/ged/ged231-csv.zip",
                   parse_dates=['date_start','date_end'],low_memory=False)
-df= pd.concat([df,pd.read_csv('https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_01_23_09.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
+df= pd.concat([df,pd.read_csv('https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_01_23_12.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
 month = datetime.now().strftime("%m")
-for i in range(10,int(month)):
+for i in range(1,int(month)):
     df= pd.concat([df,pd.read_csv(f'https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_0_{i}.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
-
-# df_tot = pd.DataFrame(columns=df.country.unique(),index=pd.date_range(df.date_start.min(),
-#                                           df.date_end.max()))
-# df_tot=df_tot.fillna(0)
-# for i in df.country.unique():
-#     df_sub=df[df.country==i]
-#     for j in range(len(df_sub)):
-#         if df_sub.date_start.iloc[j] == df_sub.date_end.iloc[j]:
-#             df_tot.loc[df_sub.date_start.iloc[j],i]=df_tot.loc[df_sub.date_start.iloc[j],i]+df_sub.best.iloc[j]
-#         else:
-#             df_tot.loc[df_sub.date_start.iloc[j]:
-#             df_sub.date_end.iloc[j],i]=df_tot.loc[df_sub.date_start.iloc[j]: \
-#                                                   df_sub.date_end.iloc[j],i]+ \
-#                                                   df_sub.best.iloc[j]/ \
-#                                                   (df_sub.date_end.iloc[j]- \
-#                                                   df_sub.date_start.iloc[j]).days 
 
 df_tot = pd.DataFrame(columns=df.country.unique(),index=pd.date_range(df.date_start.min(),
                                           df.date_end.max()))
@@ -58,15 +42,20 @@ del df
 del df_tot
 #df_tot_m = pd.read_csv('Conf.csv',parse_dates=True,index_col=(0))
 
+df_next = {0:pd.DataFrame(columns=df_tot_m.columns,index=range(16)),1:pd.DataFrame(columns=df_tot_m.columns,index=range(16)),2:pd.DataFrame(columns=df_tot_m.columns,index=range(16))}
+df_perc = pd.DataFrame(columns=df_tot_m.columns,index=range(3))
+dict_sce = {i :[[],[],[]] for i in df_tot_m.columns}
+
+
 h_train=10
 h=6
 pred_tot=[]
 pred_raw=[]
 dict_m={i :[] for i in df_tot_m.columns}
-for i in range(len(df_tot_m.columns)):
-    if not (df_tot_m.iloc[-h_train:,i]==0).all():
+for coun in range(len(df_tot_m.columns)):
+    if not (df_tot_m.iloc[-h_train:,coun]==0).all():
         shape = Shape()
-        shape.set_shape(df_tot_m.iloc[-h_train:,i]) 
+        shape.set_shape(df_tot_m.iloc[-h_train:,coun]) 
         find = finder(df_tot_m.iloc[:-h,:],shape)
         find.find_patterns(min_d=0.1,select=True,metric='dtw',dtw_sel=2)
         min_d_d=0.1
@@ -75,9 +64,50 @@ for i in range(len(df_tot_m.columns)):
             find.find_patterns(min_d=min_d_d,select=True,metric='dtw',dtw_sel=2)
         pred_ori = find.predict(horizon=h,plot=False,mode='mean')
         pred_raw.append(pred_ori)
-        pred_ori = pred_ori*(df_tot_m.iloc[-h_train:,i].max()-df_tot_m.iloc[-h_train:,i].min())+df_tot_m.iloc[-h_train:,i].min()
+        pred_ori = pred_ori*(df_tot_m.iloc[-h_train:,coun].max()-df_tot_m.iloc[-h_train:,coun].min())+df_tot_m.iloc[-h_train:,coun].min()
         pred_tot.append(pred_ori)
-        dict_m[df_tot_m.columns[i]]=find.sequences
+        dict_m[df_tot_m.columns[coun]]=find.sequences
+        seq_pred =find.predict(horizon=h,plot=False,mode='mean',seq_out=True)
+        y_pred = np.full((len(seq_pred),),np.nan)
+        y_pred[seq_pred.sum(axis=1)<=1.5] = 0
+        y_pred[(seq_pred.sum(axis=1)>1.5) & (seq_pred.sum(axis=1)<5)] = 1
+        y_pred[seq_pred.sum(axis=1)>=5] = 2
+        
+        perc=[]
+        for i in range(3):#len(pd.Series(y_pred).value_counts())):
+            if len(seq_pred[y_pred==i]) != 0:
+                norm = seq_pred[y_pred==i].mean() * (df_tot_m.iloc[-h_train:,coun].max()-df_tot_m.iloc[-h_train:,coun].min()) + df_tot_m.iloc[-h_train:,coun].min()
+                norm.index = pd.date_range(start=df_tot_m.iloc[-h_train:,coun].index[-1] + pd.DateOffset(months=1), periods=6, freq='M')
+                seq_f = pd.concat([df_tot_m.iloc[-h_train:,coun],norm],axis=0)
+                index_s = seq_f.index
+                seq_f = seq_f.reset_index(drop=True)
+                df_next[i].iloc[:,coun] = seq_f
+            else : 
+                df_next[i].iloc[:,coun] = [float('nan')]*16
+            perc.append(round(len(seq_pred[y_pred==i])/len(seq_pred)*100,1))
+        df_perc.iloc[:,coun]=perc
+        
+        y_pred_p = y_pred.astype(float)
+        count_zeros = 0
+        count_ones = 0
+        count_twos = 0
+        for i in range(len(y_pred_p)):
+            value = y_pred_p[i]
+            norm = seq_pred.iloc[i,:]*(find.sequences[i][0].max()-find.sequences[i][0].min())+ find.sequences[i][0].min()
+            norm.index = pd.date_range(start=find.sequences[i][0].index[-1] + pd.DateOffset(months=1), periods=6, freq='M')
+            seq_f = pd.concat([find.sequences[i][0],norm],axis=0)
+            seq_f.name = find.sequences[i][0].name
+            if value == 0 and count_zeros<5:   
+                dict_sce[df_tot_m.columns[coun]][0].append(seq_f)
+                count_zeros += 1
+            elif value == 1 and count_ones<5:
+                dict_sce[df_tot_m.columns[coun]][1].append(seq_f)
+                count_ones += 1
+            elif value == 2 and count_twos<5:
+                dict_sce[df_tot_m.columns[coun]][2].append(seq_f)
+                count_twos += 1
+            else:
+                pass
     else :
         pred_tot.append(pd.DataFrame(np.zeros((h,3))))
         pred_raw.append(pd.DataFrame(np.zeros((h,3))))
@@ -164,6 +194,40 @@ df_tot_m_plot = df_tot_m_plot.rename(columns={'Bosnia-Herzegovina':'Bosnia and H
                                    'Russia (Soviet Union)':'Russia','Serbia (Yugoslavia)':'Serbia','South Sudan':'S. Sudan',
                                    'Yemen (North Yemen)':'Yemen','Zimbabwe (Rhodesia)':'Zimbabwe','Vietnam (North Vietnam)':'Vietnam'})
 df_tot_m_plot.to_csv('Hist.csv')
+
+df_next[0].index = index_s
+df_next[1].index = index_s
+df_next[2].index = index_s
+
+def rena_f(df):
+    df = df.rename(columns={'Bosnia-Herzegovina':'Bosnia and Herz.','Cambodia (Kampuchea)':'Cambodia',
+                                    'Central African Republic':'Central African Rep.','DR Congo (Zaire)':'Dem. Rep. Congo',
+                                    'Ivory Coast':'Côte d\'Ivoire','Kingdom of eSwatini (Swaziland)':'eSwatini', 'Dominican Republic':'Dominican Rep.',
+                                    'Macedonia, FYR':'Macedonia','Madagascar (Malagasy)':'Madagascar','Myanmar (Burma)':'Myanmar',
+                                    'Russia (Soviet Union)':'Russia','Serbia (Yugoslavia)':'Serbia','South Sudan':'S. Sudan',
+                                    'Yemen (North Yemen)':'Yemen','Zimbabwe (Rhodesia)':'Zimbabwe','Vietnam (North Vietnam)':'Vietnam'})
+    return df
+
+df_perc=rena_f(df_perc)
+df_next[0]=rena_f(df_next[0])
+df_next[1]=rena_f(df_next[1])
+df_next[2]=rena_f(df_next[2])
+
+df_perc.to_csv('perc.csv')
+df_next[0].to_csv('dec.csv')
+df_next[1].to_csv('sta.csv')
+df_next[2].to_csv('inc.csv')
+
+rena={'Bosnia-Herzegovina':'Bosnia and Herz.','Cambodia (Kampuchea)':'Cambodia',
+                                   'Central African Republic':'Central African Rep.','DR Congo (Zaire)':'Dem. Rep. Congo',
+                                   'Ivory Coast':'Côte d\'Ivoire','Kingdom of eSwatini (Swaziland)':'eSwatini', 'Dominican Republic':'Dominican Rep.',
+                                   'Macedonia, FYR':'Macedonia','Madagascar (Malagasy)':'Madagascar','Myanmar (Burma)':'Myanmar',
+                                   'Russia (Soviet Union)':'Russia','Serbia (Yugoslavia)':'Serbia','South Sudan':'S. Sudan',
+                                   'Yemen (North Yemen)':'Yemen','Zimbabwe (Rhodesia)':'Zimbabwe','Vietnam (North Vietnam)':'Vietnam'}
+dict_sce_f = {rena[key] if key in rena else key: item for key, item in dict_sce.items()}
+with open('dict_sce.pkl', 'wb') as f:
+    pickle.dump(dict_sce_f, f)
+
 
 # =============================================================================
 # Global Map
