@@ -325,9 +325,9 @@ c.linkURL(twitter_url, (letter[0] - right_margin - c.stringWidth(twitter_text, "
 c.drawString(letter[0] - right_margin - c.stringWidth(website_text, "Poppins", 10), bottom_margin, website_text)
 c.linkURL(website_url, (letter[0] - right_margin - c.stringWidth(website_text, "Poppins", 10), bottom_margin, letter[0] - right_margin, bottom_margin + line_height), relative=1)
 
-subtitle_font = "Poppins"  # Using a standard sans-serif font
+subtitle_font = "Poppins" 
 subtitle_font_size = 11
-subtitle_color = HexColor("#505050")  # Assuming "gris foncé 3" is a dark grey color
+subtitle_color = HexColor("#505050")  
 c.setFont(subtitle_font, subtitle_font_size)
 c.setFillColor(subtitle_color)
 c.drawString(letter[0] - right_margin - c.stringWidth('Contact', "Poppins", 11), bottom_margin + 3.25*line_height, 'Contact')
