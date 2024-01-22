@@ -168,7 +168,7 @@ home_layout = html.Div([
         dbc.Row([
             dbc.Col(dl.Map(center=[0, 5], zoom=2, minZoom=2, children=l_country + [
                 dl.GeoJSON(url='/assets/world_plot.geojson', id='total_c', style={'color': 'black', 'weight': 1, 'opacity': 1, 'fillOpacity': 0})
-            ], style={'width': '95vw', 'height': '78vh', 'backgroundColor': '#F5F5F5','z-index':1}, zoomControl=False, attributionControl=False,maxBounds=[[-60, -180], [90, 180]], id='map'), 
+            ], style={'width': '95vw', 'height': '78vh', 'backgroundColor': '#F5F5F5','z-index':1}, zoomControl=False, attributionControl=False,maxBounds=[[-60, -220], [90, 350]], id='map'), 
                     width=12)
         ]),
         html.Div([
