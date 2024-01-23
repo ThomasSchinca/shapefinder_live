@@ -49,7 +49,7 @@ title_color = HexColor("#df2226")
 # Add title to the PDF
 c.setFont(title_font, title_font_size)
 c.setFillColor(title_color)
-c.drawCentredString(297.5, 750, title_text)  # Positioning title at the top, center of the page
+c.drawCentredString(297.5, 750, title_text)  
 
 def draw_paragraph(c, text, font, font_size, color, x, y, width):
     styles = getSampleStyleSheet()
@@ -172,7 +172,7 @@ title_font_size = 13
 title_color = HexColor("#df2226")
 c.setFont(title_font, title_font_size)
 c.setFillColor(title_color)
-c.drawCentredString(75, 760, title_text)
+c.drawString(30, 760, title_text)
 
 
 sub_image2 = 'Images/ex1.png'
@@ -225,7 +225,7 @@ title_font_size = 13
 title_color = HexColor("#df2226")
 c.setFont(title_font, title_font_size)
 c.setFillColor(title_color)
-c.drawCentredString(75, 580, title_text)
+c.drawString(30, 580, title_text)
 
 
 sub_image2 = 'Images/ex2.png'
@@ -279,7 +279,7 @@ title_font_size = 13
 title_color = HexColor("#df2226")
 c.setFont(title_font, title_font_size)
 c.setFillColor(title_color)
-c.drawCentredString(75, 400, title_text)
+c.drawString(30, 400, title_text)
 
 
 sub_image2 = 'Images/ex3.png'
@@ -332,7 +332,7 @@ title_font_size = 13
 title_color = HexColor("#df2226")
 c.setFont(title_font, title_font_size)
 c.setFillColor(title_color)
-c.drawCentredString(75, 220, title_text)
+c.drawString(30, 220, title_text)
 
 
 sub_image2 = 'Images/ex4.png'
