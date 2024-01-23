@@ -43,3 +43,4 @@ def convert_pdf_to_html_base64(pdf_path, output_folder):
 pdf_path = 'assets/Report.pdf' # Example PDF path
 output_folder = 'assets/html_output/' # Output folder for HTML and images
 html_file_path = convert_pdf_to_html_base64(pdf_path, output_folder)
+

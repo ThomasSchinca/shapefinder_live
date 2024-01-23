@@ -162,8 +162,10 @@ c.drawString(letter[0] - right_margin - c.stringWidth('Contact', "Poppins", 11),
 c.showPage()
 
 df_best = pd.read_csv('best.csv',index_col=0)
+df_perc = pd.read_csv('perc.csv',parse_dates=True,index_col=(0))
 
 first = df_best.iloc[-1][0]
+perc = df_perc.iloc[:,df_best.iloc[-1][1]]
 title_text = f'{first}'
 title_font = "Poppins-Bold"  
 title_font_size = 13
@@ -175,47 +177,48 @@ c.drawCentredString(75, 760, title_text)
 
 sub_image2 = 'Images/ex1.png'
 sub_image3 = 'Images/ex1_all.png'
-c.drawImage(sub_image2, x=60, y=600, width=160,height=120, mask='auto')
-c.drawImage(sub_image3, x=270, y=600, width=300,height=120, mask='auto')  
+sub_image4 = 'Images/ex1_sce.png'
+c.drawImage(sub_image2, x=30, y=600, width=160,height=120, mask='auto')
+c.drawImage(sub_image3, x=220, y=600, width=200,height=120, mask='auto') 
+c.drawImage(sub_image4, x=440, y=590, width=100,height=140, mask='auto')  
+
+subtitle_font_size = 8
+c.setFont(subtitle_font, subtitle_font_size)
+t_1 = "Decrease"
+c.setFillColor((216/255, 134/255, 141/255))
+c.drawCentredString(565, 710, t_1)
+t_1 =f'pr={perc.iloc[0]}%'
+c.setFillColor((216/255, 134/255, 141/255))
+c.drawCentredString(565, 695, t_1)
+t_3 = "Stable"
+c.setFillColor('orangered')
+c.drawCentredString(565, 665, t_3)
+t_3 = f"pr={perc.iloc[1]}%"
+c.setFillColor('orangered')
+c.drawCentredString(565, 650, t_3)
+t_4 = "Increase"
+c.setFillColor('darkred')
+c.drawCentredString(565, 620, t_4)
+t_4 = f"pr={perc.iloc[2]}%"
+c.setFillColor('darkred')
+c.drawCentredString(565, 605, t_4)
+
+
 subtitle_font_size = 10
-  # Assuming "gris foncé 3" is a dark grey color
 c.setFont(subtitle_font, subtitle_font_size)
 t_1 = "Fatalities over last 10 months"
 c.setFillColor(subtitle_color)
-c.drawCentredString(150, 740, t_1)
+c.drawCentredString(110, 740, t_1)
 t_3 = "Closest historical matches"
 c.setFillColor(subtitle_color)
-c.drawCentredString(430, 740, t_3)
-
-# images = ['Images/ex1.png', 'Images/ex1_m4.png', 'Images/ex1_barh.png']
-# titles = ["Last Observed Values", "Mean of Past Futures", "All sequences"]
-# subtitle_font = "Poppins"  # Using a standard sans-serif font
-# subtitle_font_size = 11
-# subtitle_color = HexColor("#505050")  # Assuming "gris foncé 3" is a dark grey color
-# c.setFont(subtitle_font, subtitle_font_size)
-# c.setFillColor(subtitle_color)
-# image_y = 580
-# text_y = image_y + 130 
-# x_offset = 50
-# x_step = 175
-# for i, (title, image) in enumerate(zip(titles, images)):
-#     current_x = x_offset + i * x_step
-#     if i==2:
-#         c.drawImage(image, current_x-15, image_y, width=200, height=150, preserveAspectRatio=True)
-#         c.drawString(current_x+50, text_y, title)
-#     else:
-#         c.drawImage(image, current_x, image_y, width=150, height=130, preserveAspectRatio=True)
-#         c.drawString(current_x+25, text_y, title)
-
-# c.drawCentredString(297.5, image_y-10, 'Matching sequences')
-# image_y = 440
-# images = ['Images/ex1_m0.png', 'Images/ex1_m1.png', 'Images/ex1_m2.png']
-# for i, (title, image) in enumerate(zip(titles, images)):
-#     current_x = x_offset + i * x_step
-#     c.drawImage(image, current_x, image_y, width=150, height=130, preserveAspectRatio=True)
+c.drawCentredString(320, 740, t_3)
+t_4 = "Scenarios"
+c.setFillColor(subtitle_color)
+c.drawCentredString(525, 740, t_4)
 
 
 first = df_best.iloc[-2][0]
+perc = df_perc.iloc[:,df_best.iloc[-2][1]]
 title_text = f'{first}'
 title_font = "Poppins-Bold"  
 title_font_size = 13
@@ -227,20 +230,49 @@ c.drawCentredString(75, 580, title_text)
 
 sub_image2 = 'Images/ex2.png'
 sub_image3 = 'Images/ex2_all.png'
-c.drawImage(sub_image2, x=60, y=420, width=160,height=120, mask='auto')
-c.drawImage(sub_image3, x=270, y=420, width=300,height=120, mask='auto')  
+sub_image4 = 'Images/ex2_sce.png'
+c.drawImage(sub_image2, x=30, y=420, width=160,height=120, mask='auto')
+c.drawImage(sub_image3, x=220, y=420, width=200,height=120, mask='auto')
+c.drawImage(sub_image4, x=440, y=410, width=100,height=140, mask='auto')  
+
+subtitle_font_size = 8
+c.setFont(subtitle_font, subtitle_font_size)
+t_1 = "Decrease"
+c.setFillColor((216/255, 134/255, 141/255))
+c.drawCentredString(565, 530, t_1)
+t_1 =f'pr={perc.iloc[0]}%'
+c.setFillColor((216/255, 134/255, 141/255))
+c.drawCentredString(565, 515, t_1)
+t_3 = "Stable"
+c.setFillColor('orangered')
+c.drawCentredString(565, 485, t_3)
+t_3 = f"pr={perc.iloc[1]}%"
+c.setFillColor('orangered')
+c.drawCentredString(565, 470, t_3)
+t_4 = "Increase"
+c.setFillColor('darkred')
+c.drawCentredString(565, 440, t_4)
+t_4 = f"pr={perc.iloc[2]}%"
+c.setFillColor('darkred')
+c.drawCentredString(565, 425, t_4)
+
+
 subtitle_font_size = 10
-  # Assuming "gris foncé 3" is a dark grey color
 c.setFont(subtitle_font, subtitle_font_size)
 t_1 = "Fatalities over last 10 months"
 c.setFillColor(subtitle_color)
-c.drawCentredString(150, 560, t_1)
+c.drawCentredString(110, 560, t_1)
 t_3 = "Closest historical matches"
 c.setFillColor(subtitle_color)
-c.drawCentredString(430, 560, t_3)
+c.drawCentredString(320, 560, t_3)
+t_4 = "Scenarios"
+c.setFillColor(subtitle_color)
+c.drawCentredString(525, 560, t_4)
+
 
 
 first = df_best.iloc[-3][0]
+perc = df_perc.iloc[:,df_best.iloc[-3][1]]
 title_text = f'{first}'
 title_font = "Poppins-Bold"  
 title_font_size = 13
@@ -252,20 +284,48 @@ c.drawCentredString(75, 400, title_text)
 
 sub_image2 = 'Images/ex3.png'
 sub_image3 = 'Images/ex3_all.png'
-c.drawImage(sub_image2, x=60, y=250, width=160,height=120, mask='auto')
-c.drawImage(sub_image3, x=270, y=250, width=300,height=120, mask='auto')  
+sub_image4 = 'Images/ex3_sce.png'
+c.drawImage(sub_image2, x=30, y=250, width=160,height=120, mask='auto')
+c.drawImage(sub_image3, x=220, y=250, width=200,height=120, mask='auto')
+c.drawImage(sub_image4, x=440, y=240, width=100,height=140, mask='auto') 
+
+subtitle_font_size = 8
+c.setFont(subtitle_font, subtitle_font_size)
+t_1 = "Decrease"
+c.setFillColor((216/255, 134/255, 141/255))
+c.drawCentredString(565, 360, t_1)
+t_1 =f'pr={perc.iloc[0]}%'
+c.setFillColor((216/255, 134/255, 141/255))
+c.drawCentredString(565, 345, t_1)
+t_3 = "Stable"
+c.setFillColor('orangered')
+c.drawCentredString(565, 315, t_3)
+t_3 = f"pr={perc.iloc[1]}%"
+c.setFillColor('orangered')
+c.drawCentredString(565, 300, t_3)
+t_4 = "Increase"
+c.setFillColor('darkred')
+c.drawCentredString(565, 270, t_4)
+t_4 = f"pr={perc.iloc[2]}%"
+c.setFillColor('darkred')
+c.drawCentredString(565, 255, t_4)
+ 
+
 subtitle_font_size = 10
-  # Assuming "gris foncé 3" is a dark grey color
 c.setFont(subtitle_font, subtitle_font_size)
 t_1 = "Fatalities over last 10 months"
 c.setFillColor(subtitle_color)
-c.drawCentredString(150, 380, t_1)
+c.drawCentredString(110, 382, t_1)
 t_3 = "Closest historical matches"
 c.setFillColor(subtitle_color)
-c.drawCentredString(430, 380, t_3)
+c.drawCentredString(320, 382, t_3)
+t_4 = "Scenarios"
+c.setFillColor(subtitle_color)
+c.drawCentredString(525, 382, t_4)
 
 
 first = df_best.iloc[-4][0]
+perc = df_perc.iloc[:,df_best.iloc[-4][1]]
 title_text = f'{first}'
 title_font = "Poppins-Bold"  
 title_font_size = 13
@@ -277,17 +337,44 @@ c.drawCentredString(75, 220, title_text)
 
 sub_image2 = 'Images/ex4.png'
 sub_image3 = 'Images/ex4_all.png'
-c.drawImage(sub_image2, x=60, y=70, width=160,height=120, mask='auto')
-c.drawImage(sub_image3, x=270, y=70, width=300,height=120, mask='auto')  
+sub_image4 = 'Images/ex4_sce.png'
+c.drawImage(sub_image2, x=30, y=70, width=160,height=120, mask='auto')
+c.drawImage(sub_image3, x=220, y=70, width=200,height=120, mask='auto')
+c.drawImage(sub_image4, x=440, y=60, width=100,height=140, mask='auto')  
+
+subtitle_font_size = 8
+c.setFont(subtitle_font, subtitle_font_size)
+t_1 = "Decrease"
+c.setFillColor((216/255, 134/255, 141/255))
+c.drawCentredString(565, 175, t_1)
+t_1 =f'pr={perc.iloc[0]}%'
+c.setFillColor((216/255, 134/255, 141/255))
+c.drawCentredString(565, 160, t_1)
+t_3 = "Stable"
+c.setFillColor('orangered')
+c.drawCentredString(565, 130, t_3)
+t_3 = f"pr={perc.iloc[1]}%"
+c.setFillColor('orangered')
+c.drawCentredString(565, 115, t_3)
+t_4 = "Increase"
+c.setFillColor('darkred')
+c.drawCentredString(565, 85, t_4)
+t_4 = f"pr={perc.iloc[2]}%"
+c.setFillColor('darkred')
+c.drawCentredString(565, 70, t_4)
+
+
 subtitle_font_size = 10
-  # Assuming "gris foncé 3" is a dark grey color
 c.setFont(subtitle_font, subtitle_font_size)
 t_1 = "Fatalities over last 10 months"
 c.setFillColor(subtitle_color)
-c.drawCentredString(150, 200, t_1)
+c.drawCentredString(110, 200, t_1)
 t_3 = "Closest historical matches"
 c.setFillColor(subtitle_color)
-c.drawCentredString(430, 200, t_3)
+c.drawCentredString(320, 200, t_3)
+t_4 = "Scenarios"
+c.setFillColor(subtitle_color)
+c.drawCentredString(525, 200, t_4)
 
 
 

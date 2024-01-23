@@ -12,15 +12,16 @@ import numpy as np
 import geopandas as gpd
 import seaborn as sns
 import pickle
-from datetime import datetime,date,timedelta
-import os 
+import matplotlib.colors as mcolors
+from matplotlib.cm import ScalarMappable
+from datetime import datetime,timedelta
 
 df = pd.read_csv("https://ucdp.uu.se/downloads/ged/ged231-csv.zip",
                   parse_dates=['date_start','date_end'],low_memory=False)
 df= pd.concat([df,pd.read_csv('https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_01_23_12.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
 month = datetime.now().strftime("%m")
 for i in range(1,int(month)):
-    df= pd.concat([df,pd.read_csv(f'https://ucdp.uu.se/downloads/candidateged/GEDEvent_v23_0_{i}.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
+    df= pd.concat([df,pd.read_csv(f'https://ucdp.uu.se/downloads/candidateged/GEDEvent_v24_0_{i}.csv',parse_dates=['date_start','date_end'],low_memory=False)],axis=0)
 
 df_tot = pd.DataFrame(columns=df.country.unique(),index=pd.date_range(df.date_start.min(),
                                           df.date_end.max()))
@@ -235,14 +236,23 @@ with open('dict_sce.pkl', 'wb') as f:
 
 fig, ax = plt.subplots(1, 1, figsize=(30, 15))
 world.boundary.plot(ax=ax, color='black')
-world.plot(column='log_per_pred', cmap='Reds', ax=ax)
-plt.xlim(-180,180)
+norm = mcolors.Normalize(vmin=0, vmax=5)
+mapping = world.plot(column='log_per_pred', cmap='Reds', ax=ax, norm=norm)
+plt.xlim(-180, 180)
 plt.box(False)
 ax.spines['left'].set_visible(False)
 ax.set_yticklabels([])
 ax.set_yticks([])
 ax.set_xticklabels([])
 ax.set_xticks([])
+cbar_ax = fig.add_axes([0.65, 0.15, 0.3, 0.02]) 
+sm = ScalarMappable(cmap='Reds', norm=norm)
+sm.set_array([]) 
+cbar = plt.colorbar(sm, cax=cbar_ax, orientation='horizontal')
+cbar.set_ticks([0, 1, 2, 3, 4, 5])
+cbar.set_ticklabels(['0', '1', '2', '3', '4', '5'])
+plt.text(1.9,1.5,'Risk index', fontsize=30)
+plt.text(-8.5,0.1,'The risk index corresponds to the log sum of predicted fatalities in the next 6 months.',color='dimgray', fontdict={'style': 'italic'})
 plt.savefig('Images/map.png', bbox_inches='tight')
 plt.show()
 
@@ -445,24 +455,7 @@ while len(find.sequences)<3:
     find.find_patterns(min_d=min_d_d,select=True,metric='dtw',dtw_sel=2)
 
 pred_ori = find.predict(horizon=h,plot=False,mode='mean')
-#pred_ori = pred_ori*(df_tot_m.iloc[-h_train:,i].max()-df_tot_m.iloc[-h_train:,i].min())+df_tot_m.iloc[-h_train:,i].min()
 seq_pred =find.predict(horizon=h,plot=False,mode='mean',seq_out=True)
-
-
-# plt.figure(figsize=(10, 6))
-# ax = plt.gca()
-# plt.plot(pred_ori.index, pred_ori.iloc[:, 0], marker='o', color='red', linestyle='-', linewidth=2, markersize=8)
-# upper_bound = pred_ori.iloc[:, 2]
-# lower_bound = pred_ori.iloc[:, 1]
-# plt.fill_between(pred_ori.index, lower_bound, upper_bound, color='red', alpha=0.2)
-# plt.grid(axis='y', linestyle='--', alpha=0.7)
-# plt.yticks(fontsize=16)
-# plt.box(False)
-# plt.xticks([*range(6)],['t+1','t+2','t+3','t+4','t+5','t+6'])
-# plt.xticks(fontsize=16)
-# plt.savefig('Images/ex1_m4.png', bbox_inches='tight')
-# plt.show()
-
 
 plt.figure(figsize=(10, 6))
 plt.plot(df_tot_m.iloc[-h_train:,i], marker='o', color='black', linestyle='-', linewidth=2, markersize=8)
@@ -475,7 +468,7 @@ plt.xticks(rotation=45, ha='right')
 plt.savefig('Images/ex1.png', bbox_inches='tight')
 plt.show()
 
-plt.figure(figsize=(15, 6))
+plt.figure(figsize=(15, 9))
 for i in range(len(seq_pred[:30])):
     norm = (find.sequences[i][0] - find.sequences[i][0].min()) / (find.sequences[i][0].max()-find.sequences[i][0].min())
     norm.index = range(12-len(norm),12)
@@ -500,7 +493,25 @@ plt.legend(fontsize=20)
 plt.savefig('Images/ex1_all.png', bbox_inches='tight')
 plt.show()
     
-# for k in range(3):
+i = df_tot_m.columns.tolist().index(df_plot.index[-1])
+name_sc=['Decrease','Stable','Increase']
+col = [(216/255, 134/255, 141/255),'orangered','darkred']
+
+fig, axs = plt.subplots(3, 1, figsize=(10, 15))
+
+for k in range(3):
+    axs[k].plot(df_next[k].iloc[:, i], color='black', linewidth=3)
+    axs[k].plot(df_next[k].iloc[-7:, i], color=col[k], linewidth=8)
+    axs[k].plot(df_next[k].iloc[-6:, i], color=col[k], marker='o', linewidth=0)
+    axs[k].set_frame_on(False)
+    axs[k].grid(axis='y', linestyle='--', alpha=0.7)
+    axs[k].tick_params(axis='y', labelsize=30)
+    axs[k].set_xticks([])
+
+plt.tight_layout()
+plt.savefig('Images/ex1_sce.png', bbox_inches='tight')
+plt.show()
+    
 #     pred_ori= seq_pred.iloc[k,:]*(find.sequences[k][0].max()-find.sequences[k][0].min())+find.sequences[k][0].min()
 #     pred_ori =pred_ori.T
 #     pred_ori.index = pd.date_range(start=find.sequences[k][0].index[-1],periods=h+1,freq='M')[1:]
@@ -567,7 +578,7 @@ for coun in range(2,5):
     #pred_ori = pred_ori*(df_tot_m.iloc[-h_train:,i].max()-df_tot_m.iloc[-h_train:,i].min())+df_tot_m.iloc[-h_train:,i].min()
     seq_pred =find.predict(horizon=h,plot=False,mode='mean',seq_out=True)
     
-    plt.figure(figsize=(15, 6))
+    plt.figure(figsize=(15, 9))
     for j in range(len(seq_pred[:30])):
         norm = (find.sequences[j][0] - find.sequences[j][0].min()) / (find.sequences[j][0].max()-find.sequences[j][0].min())
         norm.index = range(12-len(norm),12)
@@ -602,7 +613,30 @@ for coun in range(2,5):
     plt.savefig(f'Images/ex{coun}.png', bbox_inches='tight')
     plt.show()
     
+    fig, axs = plt.subplots(3, 1, figsize=(10, 15))
+    for k in range(3):
+        if df_next[k].iloc[:, i].isna().all() :
+            axs[k].set_frame_on(False)
+            axs[k].set_xticks([])
+            axs[k].set_yticks([])
+        else:
+            axs[k].plot(df_next[k].iloc[:, i], color='black', linewidth=3)
+            axs[k].plot(df_next[k].iloc[-7:, i], color=col[k], linewidth=8)
+            axs[k].plot(df_next[k].iloc[-6:, i], color=col[k], marker='o', linewidth=0)
+            axs[k].set_frame_on(False)
+            axs[k].grid(axis='y', linestyle='--', alpha=0.7)
+            axs[k].tick_params(axis='y', labelsize=30)
+            axs[k].set_xticks([])
+    plt.tight_layout()
+    plt.savefig(f'Images/ex{coun}_sce.png', bbox_inches='tight')
+    plt.show()
+    
+indo=[]
+for coun in range(1,5):
+    indo.append(df_tot_m.columns.tolist().index(df_plot.index[-coun]))
+indo.reverse()
 df_best = pd.DataFrame(df_plot.index[-4:])
+df_best['find']=indo
 df_best.to_csv('best.csv')
 
 
