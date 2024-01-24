@@ -15,6 +15,7 @@ import pickle
 import matplotlib.colors as mcolors
 from matplotlib.cm import ScalarMappable
 from datetime import datetime,timedelta
+import math
 
 df = pd.read_csv("https://ucdp.uu.se/downloads/ged/ged231-csv.zip",
                   parse_dates=['date_start','date_end'],low_memory=False)
@@ -236,7 +237,7 @@ with open('dict_sce.pkl', 'wb') as f:
 
 fig, ax = plt.subplots(1, 1, figsize=(30, 15))
 world.boundary.plot(ax=ax, color='black')
-norm = mcolors.Normalize(vmin=0, vmax=5)
+norm = mcolors.Normalize(vmin=0, vmax=math.ceil(max(world['log_per_pred'])))
 mapping = world.plot(column='log_per_pred', cmap='Reds', ax=ax, norm=norm)
 plt.xlim(-180, 180)
 plt.box(False)
@@ -249,8 +250,8 @@ cbar_ax = fig.add_axes([0.65, 0.15, 0.3, 0.02])
 sm = ScalarMappable(cmap='Reds', norm=norm)
 sm.set_array([]) 
 cbar = plt.colorbar(sm, cax=cbar_ax, orientation='horizontal')
-cbar.set_ticks([0, 1, 2, 3, 4, 5])
-cbar.set_ticklabels(['0', '1', '2', '3', '4', '5'])
+cbar.set_ticks([*range(math.ceil(max(world['log_per_pred']))+1)])
+cbar.set_ticklabels(['1']+[f'$10^{e}$' for e in range(1,math.ceil(max(world['log_per_pred']))+1)])
 plt.text(1.9,1.5,'Risk index', fontsize=30)
 plt.text(-8.5,0.1,'The risk index corresponds to the log sum of predicted fatalities in the next 6 months.',color='dimgray', fontdict={'style': 'italic'})
 plt.savefig('Images/map.png', bbox_inches='tight')
